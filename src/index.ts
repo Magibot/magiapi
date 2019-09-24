@@ -1,5 +1,6 @@
 import http from 'http';
 import createExpressApplication from './config/express';
+import mongoose from './config/mongoose';
 
 const app = createExpressApplication();
 const port = app.get('port');
