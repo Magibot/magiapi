@@ -1,9 +1,9 @@
 import http from 'http';
 import createExpressApplication from './config/express';
-import createMongooseConnection from './config/mongoose';
+import { createMongooseConnection } from './config/mongoose';
 
 const app = createExpressApplication();
-const mongoose = createMongooseConnection();
+const mongoose = createMongooseConnection({ logger: true });
 const port = app.get('port');
 
 http.createServer(app).listen(port, function() {
