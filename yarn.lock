@@ -168,11 +168,6 @@ array-flatten@1.1.1:
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-1.1.1.tgz#9a5f699051b1e7073328f2a008968b64ea2955d2"
   integrity sha1-ml9pkFGx5wczKPKgCJaLZOopVdI=
 
-async@0.2.9:
-  version "0.2.9"
-  resolved "https://registry.yarnpkg.com/async/-/async-0.2.9.tgz#df63060fbf3d33286a76aaf6d55a2986d9ff8619"
-  integrity sha1-32MGD789Myhqdqr21Vophtn/hhk=
-
 async@2.6.2:
   version "2.6.2"
   resolved "https://registry.yarnpkg.com/async/-/async-2.6.2.tgz#18330ea7e6e313887f5d2f2a904bac6fe4dd5381"
@@ -387,13 +382,6 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
-
-express-load@^1.1.16:
-  version "1.1.16"
-  resolved "https://registry.yarnpkg.com/express-load/-/express-load-1.1.16.tgz#eadbab490b0adb5485df673d6c42fa6af8e27cf7"
-  integrity sha512-R+HNkLZMbUCJQ42VPx4sGbs/a0Xv//XUNRft2WqgBz7+6qL8QyTsqBdwPh3h33lxFFrwHKfF4Wn65sDg8POiHA==
-  dependencies:
-    async "0.2.9"
 
 express@^4.17.1:
   version "4.17.1"
