@@ -29,7 +29,7 @@ export class ApiResponse {
 
   public json() {
     const { errors, payload } = this;
-    if (errors) {
+    if (errors && !payload) {
       return { errors };
     }
 
