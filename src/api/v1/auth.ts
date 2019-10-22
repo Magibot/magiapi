@@ -12,8 +12,9 @@ router.post('/register', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     const user = await User.create(request.body);
+    user.password = undefined;
     apiResponse.setPayload({ user });
-    response.status(201).json(apiResponse.json());
+    return response.status(201).json(apiResponse.json());
   } catch (err) {
     const processedError = handleModelError(err);
 
@@ -23,7 +24,11 @@ router.post('/register', async (request, response) => {
     }
 
     if (err.name === 'MongoError' && err.code === 11000) {
-      apiResponse.addError({ type: 'ConflictError', message: err.errmsg, kind: 'duplicate' });
+      apiResponse.addError({
+        type: 'ConflictError',
+        message: err.errmsg,
+        kind: 'duplicate'
+      });
       return response.status(409).json(apiResponse.json());
     }
 
