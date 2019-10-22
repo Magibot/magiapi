@@ -6,6 +6,8 @@ import cors from 'cors';
 
 import env from './env';
 
+import auth from '../api/v1/auth';
+
 /**
  * Extending the express.Request object
  * to include mongo userId in the application
@@ -31,6 +33,9 @@ export const createExpressApplication = function() {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(methodOverride());
+
+  // Routes
+  app.use('/api/v1/auth', auth)
 
   return app;
 };
