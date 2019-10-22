@@ -10,7 +10,8 @@ export interface IUser extends mongoose.Document {
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -21,7 +22,6 @@ const UserSchema = new mongoose.Schema({
     default: Date.now
   }
 });
-
 
 UserSchema.pre<IUser>('save', async function(next) {
   const user = this;
