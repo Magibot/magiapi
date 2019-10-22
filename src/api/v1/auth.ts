@@ -5,6 +5,7 @@ import ApiResponse from '../../app/api.response';
 import User from '../../models/user.model';
 
 import handleModelError from '../../helpers/model.error.handler';
+import generateJwt from '../../helpers/token.generator';
 
 const router = express.Router();
 
@@ -12,8 +13,9 @@ router.post('/register', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     const user = await User.create(request.body);
+    const token = generateJwt({ id: user.id });
     user.password = undefined;
-    apiResponse.setPayload({ user });
+    apiResponse.setPayload({ user, token });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
     const processedError = handleModelError(err);
