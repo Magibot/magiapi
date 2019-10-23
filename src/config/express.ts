@@ -7,6 +7,7 @@ import cors from 'cors';
 import env from './env';
 
 import auth from '../api/v1/auth';
+import guild from '../api/v1/guild';
 
 /**
  * Extending the express.Request object
@@ -35,7 +36,8 @@ export const createExpressApplication = function() {
   app.use(methodOverride());
 
   // Routes
-  app.use('/api/v1/auth', auth)
+  app.use('/api/v1/auth', auth);
+  app.use('/api/v1/guild', guild);
 
   return app;
 };
