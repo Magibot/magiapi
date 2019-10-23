@@ -3,7 +3,9 @@ import env from './env';
 
 mongoose.Promise = global.Promise;
 
-export const createMongooseConnection = function(params?: { logger?: boolean }) {
+export const createMongooseConnection = function(params?: {
+  logger?: boolean;
+}) {
   mongoose
     .connect(env.mongoUri, {
       useNewUrlParser: true,
@@ -11,7 +13,7 @@ export const createMongooseConnection = function(params?: { logger?: boolean }) 
       useUnifiedTopology: true
     })
     .then(() => {
-      if (params && params.logger) { 
+      if (params && params.logger) {
         console.log('Connected to Mongo Database');
       }
     })
