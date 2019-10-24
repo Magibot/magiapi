@@ -18,6 +18,7 @@ declare global {
   namespace Express {
     interface Request {
       userId: string;
+      guildId: string;
     }
   }
 }
@@ -37,7 +38,7 @@ export const createExpressApplication = function() {
 
   // Routes
   app.use('/api/v1/auth', auth);
-  app.use('/api/v1/guild', guild);
+  app.use('/api/v1/guilds', guild);
 
   return app;
 };
