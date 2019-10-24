@@ -19,6 +19,7 @@ declare global {
     interface Request {
       userId: string;
       guildId: string;
+      playlistId: string;
     }
   }
 }

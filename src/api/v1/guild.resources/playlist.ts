@@ -11,6 +11,9 @@ import exceptionHandler from '../../../helpers/general.exception.handler';
 // Types
 import errorTypes from '../../../app/types/errors';
 
+// Resources
+import songRouter from './playlist.resources/song';
+
 const router = express.Router();
 
 router.post('/', async (request, response) => {
@@ -110,5 +113,12 @@ router.delete('/:playlistId', async (request, response) => {
     return response.status(statusCode).json(jsonResponse);
   }
 });
+
+router.use('/:playlistId/songs', async (request, response, next) => {
+  request.playlistId = request.params.playlistId;
+  next();
+});
+
+router.use('/:playlistId/songs', songRouter);
 
 export default router;
