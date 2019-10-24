@@ -51,4 +51,36 @@ router.get('/:guildId', async (request, response) => {
   }
 });
 
+router.put('/:guildId', async (request, response) => {
+  const { guildId } = request.params;
+  const apiResponse = new ApiResponse();
+  try {
+    const guild = await Guild.findByIdAndUpdate(guildId, request.body, { new: true });
+    if (!guild) {
+      apiResponse.addError({
+        type: errorTypes.entity.notfound,
+        kind: 'entity.notfound',
+        message: `Guild \`${guildId}\` does not exist`
+      });
+    }
+
+    apiResponse.setPayload({ guild });
+    return response.status(200).json(apiResponse.json());
+  } catch (err) {
+    const { statusCode, jsonResponse } = exceptionHandler(err);
+    return response.status(statusCode).json(jsonResponse);
+  }
+});
+
+router.delete('/:guildId', async (request, response) => {
+  const { guildId } = request.params;
+  try {
+    await Guild.findByIdAndRemove(guildId);
+    return response.status(204).json();
+  } catch (err) {
+    const { statusCode, jsonResponse } = exceptionHandler(err);
+    return response.status(statusCode).json(jsonResponse);
+  }
+})
+
 export default router;
