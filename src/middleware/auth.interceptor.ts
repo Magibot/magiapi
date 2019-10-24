@@ -4,12 +4,14 @@ import env from '../config/env';
 
 import ApiResponse from '../app/api.response';
 
+import errorTypes from '../app/types/errors';
+
 export default function(request: Request, response: Response, next: NextFunction) {
   const apiResponse = new ApiResponse();
   const error = {
-    type: 'AuthenticationError',
+    type: errorTypes.authentication.error.token,
     message: '',
-    kind: 'token'
+    kind: 'authentication.error.token'
   };
 
   const authHeader = request.headers.authorization;

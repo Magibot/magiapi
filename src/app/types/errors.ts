@@ -6,7 +6,10 @@ export const errors = {
     }
   },
   authentication: {
-    badpassword: 'InvalidPassword'
+    badpassword: 'InvalidPassword',
+    error: {
+      token: 'TokenError'
+    }
   },
   entity: {
     notfound: 'EntityNotFound'
