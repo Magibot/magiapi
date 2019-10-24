@@ -7,6 +7,8 @@ import User from '../../models/user.model';
 import exceptionHandler from '../../helpers/general.exception.handler';
 import generateJwt from '../../helpers/token.generator';
 
+import errorTypes from '../../app/types/errors';
+
 const router = express.Router();
 
 router.post('/register', async (request, response) => {
@@ -28,16 +30,16 @@ router.post('/authenticate', async (request, response) => {
   const apiResponse = new ApiResponse();
   if (!username) {
     apiResponse.addError({
-      type: 'ValidationError',
-      kind: 'required',
+      type: errorTypes.validations.required,
+      kind: 'validations.required',
       message: 'Field `username` is required'
     });
   }
 
   if (!password) {
     apiResponse.addError({
-      type: 'ValidationError',
-      kind: 'required',
+      type: errorTypes.validations.required,
+      kind: 'validations.required',
       message: 'Field `password` is required'
     });
   }
@@ -49,18 +51,18 @@ router.post('/authenticate', async (request, response) => {
   const user = await User.findOne({ username }).select('+password');
   if (!user) {
     apiResponse.addError({
-      type: 'EntityNotFound',
+      type: errorTypes.entity.notfound,
       message: `User \`${username}\` is not registered`,
-      kind: 'notfound'
+      kind: 'entity.notfound'
     });
     return response.status(404).send(apiResponse.json());
   }
 
   if (!(await bcrypt.compare(password, user.password))) {
     apiResponse.addError({
-      type: 'InvalidPassword',
+      type: errorTypes.authentication.badpassword,
       message: 'Wrong password',
-      kind: 'password'
+      kind: 'authentication.badpassword'
     });
     return response.status(400).send(apiResponse.json());
   }
