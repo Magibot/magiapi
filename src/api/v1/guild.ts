@@ -10,6 +10,9 @@ import authInterceptor from '../../middleware/auth.interceptor';
 import ApiResponse from '../../app/api.response';
 import exceptionHandler from '../../helpers/general.exception.handler';
 
+// Types
+import errorTypes from '../../app/types/errors';
+
 const router = express.Router();
 
 // Use authentication interceptor to protect the routes of guild
@@ -20,7 +23,28 @@ router.post('/', async (request, response) => {
   try {
     const guild = await Guild.create(request.body);
     apiResponse.setPayload({ guild });
-    response.status(201).json(apiResponse.json());
+    return response.status(201).json(apiResponse.json());
+  } catch (err) {
+    const { statusCode, jsonResponse } = exceptionHandler(err);
+    return response.status(statusCode).json(jsonResponse);
+  }
+});
+
+router.get('/:guildId', async (request, response) => {
+  const apiResponse = new ApiResponse();
+  const { guildId } = request.params;
+  try {
+    const guild = await Guild.findById(guildId);
+    if (!guild) {
+      apiResponse.addError({
+        type: errorTypes.entity.notfound,
+        kind: 'entity.notfound',
+        message: `Guild \`${guildId}\` does not exist`
+      });
+    }
+
+    apiResponse.setPayload({ guild });
+    return response.status(200).json(apiResponse.json());
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);

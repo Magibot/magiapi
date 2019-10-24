@@ -11,6 +11,16 @@ export function exceptionHandler(error: any) {
     return { statusCode: 400, jsonResponse: apiResponse.json() };
   }
 
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    apiResponse.addError({
+      type: errorTypes.validations.invalid.id,
+      kind: 'validations.invalid.id',
+      message: `\`${error.value}\` is not a valid object ID.`
+    });
+
+    return { statusCode: 400, jsonResponse: apiResponse.json() };
+  }
+
   if (error.name === 'MongoError' && error.code === 11000) {
     apiResponse.addError({
       type: errorTypes.database.duplicate,
