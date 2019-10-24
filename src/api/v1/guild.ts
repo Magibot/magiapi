@@ -13,6 +13,9 @@ import exceptionHandler from '../../helpers/general.exception.handler';
 // Types
 import errorTypes from '../../app/types/errors';
 
+// Resources
+import playlistRouter from './guild.resources/playlist';
+
 const router = express.Router();
 
 // Use authentication interceptor to protect the routes of guild
@@ -38,9 +41,11 @@ router.get('/:guildId', async (request, response) => {
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
-        kind: 'entity.notfound',
-        message: `Guild \`${guildId}\` does not exist`
+        message: `Guild \`${guildId}\` does not exist`,
+        kind: 'entity.notfound'
       });
+
+      return response.status(404).json(apiResponse.json());
     }
 
     apiResponse.setPayload({ guild });
@@ -55,13 +60,17 @@ router.put('/:guildId', async (request, response) => {
   const { guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const guild = await Guild.findByIdAndUpdate(guildId, request.body, { new: true });
+    const guild = await Guild.findByIdAndUpdate(guildId, request.body, {
+      new: true
+    });
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
-        kind: 'entity.notfound',
-        message: `Guild \`${guildId}\` does not exist`
+        message: `Guild \`${guildId}\` does not exist`,
+        kind: 'entity.notfound'
       });
+
+      return response.status(404).json(apiResponse.json());
     }
 
     apiResponse.setPayload({ guild });
@@ -81,6 +90,13 @@ router.delete('/:guildId', async (request, response) => {
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
-})
+});
+
+router.use('/:guildId/playlists', async (request, response, next) => {
+  request.guildId = request.params.guildId;
+  next();
+});
+
+router.use('/:guildId/playlists', playlistRouter);
 
 export default router;
