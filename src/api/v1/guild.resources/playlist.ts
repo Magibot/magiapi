@@ -57,7 +57,10 @@ router.get('/:playlistId', async (request, response) => {
   const { playlistId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const playlist = await Playlist.findById(playlistId);
+    const playlist = await Playlist.findById(playlistId).populate(
+      request.query._populate,
+      'url addedBy title youtubeChannelId youtubeChannelName youtubeChannelUrl lengthSeconds createdAt'
+    );
     if (!playlist) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,

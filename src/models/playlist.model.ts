@@ -5,6 +5,7 @@ export interface IPlaylist extends mongoose.Document {
   name: string;
   creator: string;
   allowModify: boolean;
+  songs: Array<string>;
   createdAt: Date;
 }
 
@@ -26,6 +27,7 @@ export const PlaylistSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  songs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }],
   createdAt: {
     type: Date,
     default: Date.now

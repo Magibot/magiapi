@@ -29,6 +29,8 @@ router.post('/', async (request, response) => {
     }
 
     const song = await Song.create({ ...request.body, playlist: playlistId });
+    playlist.songs.push(song.id);
+    await playlist.save();
     apiResponse.setPayload({ song });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
@@ -54,7 +56,15 @@ router.get('/:songId', async (request, response) => {
   const { songId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const song = await Song.findById(songId);
+    let song;
+    if (request.query._populate) {
+      song = await Song.findById(songId).populate(
+        request.query._populate,
+        'name creator allowModify createdAt guild'
+      );
+    } else {
+      song = await Song.findById(songId);
+    }
     apiResponse.setPayload({ song });
     return response.status(200).json(apiResponse.json());
   } catch (err) {
@@ -65,8 +75,18 @@ router.get('/:songId', async (request, response) => {
 
 router.delete('/:songId', async (request, response) => {
   const { songId } = request.params;
+  const { playlistId } = request;
   try {
-    await Song.findByIdAndRemove(songId);
+    await Song.findByIdAndDelete(songId);
+    const playlist = await Playlist.findById(playlistId);
+    if (playlist) {
+      const index = playlist.songs.indexOf(songId);
+      if (index > -1) {
+        playlist.songs.splice(index, 1);
+      }
+      await playlist.save();
+    }
+
     return response.status(204).json();
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
