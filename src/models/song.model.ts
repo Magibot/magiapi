@@ -40,7 +40,7 @@ export const SongSchema = new mongoose.Schema({
   youtubeChannelUrl: {
     type: String
   },
-  length_seconds: {
+  lengthSeconds: {
     type: String,
     required: true
   },
