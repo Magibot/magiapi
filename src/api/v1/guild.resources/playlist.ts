@@ -7,6 +7,7 @@ import Playlist from '../../../models/playlist.model';
 // Helpers
 import ApiResponse from '../../../app/api.response';
 import exceptionHandler from '../../../helpers/general.exception.handler';
+import handlePagination from '../../../helpers/pagination.handler';
 
 // Types
 import errorTypes from '../../../app/types/errors';
@@ -49,11 +50,27 @@ router.post('/', async (request, response) => {
 router.get('/', async (request, response) => {
   const { guildId } = request;
   const apiResponse = new ApiResponse();
+
+  // Pagination values
+  const { _offset, _limit } = request.query;
+
   try {
-    const playlists = await Playlist.find({ guild: guildId });
+    let query = Playlist.find({ guild: guildId }).sort('createdAt');
+    query = handlePagination(query, { offset: _offset, limit: _limit });
+
+    const playlists = await query.exec();
     apiResponse.setPayload({ playlists });
     return response.status(200).json(apiResponse.json());
   } catch (err) {
+    if (err instanceof ApiResponse) {
+      const errorJson = err.json();
+      if (errorJson.errors && errorJson.errors[0].kind === 'entity.notfound') {
+        return response.status(204).json();
+      } else {
+        return response.status(400).json(errorJson);
+      }
+    }
+    
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
