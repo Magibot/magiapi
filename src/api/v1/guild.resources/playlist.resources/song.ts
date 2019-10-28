@@ -79,7 +79,7 @@ router.get('/:songId', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     let song;
-    if (request.query._populate) {
+    if (request.query._populate === 'playlist') {
       song = await Song.findById(songId).populate(
         request.query._populate,
         'name creator allowModify createdAt guild'

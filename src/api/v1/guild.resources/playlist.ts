@@ -64,7 +64,7 @@ router.get('/:playlistId', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     let playlist;
-    if (request.query._populate) {
+    if (request.query._populate === 'songs') {
       playlist = await Playlist.findById(playlistId).populate(
         request.query._populate,
         'url addedBy title youtubeChannelId youtubeChannelName youtubeChannelUrl lengthSeconds createdAt'
