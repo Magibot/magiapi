@@ -2,7 +2,8 @@ export const errors = {
   validations: {
     required: 'ValidationError',
     invalid: {
-      id: 'InvalidObjectId'
+      id: 'InvalidObjectId',
+      query: 'InvalidQueryParameter'
     }
   },
   authentication: {
