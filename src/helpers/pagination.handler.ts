@@ -12,7 +12,6 @@ export const validatePaginationParameters = (params: PaginationParameter) => {
   const apiResponse = new ApiResponse();
   let hasErrors = false;
   if (offset && isNaN(offset)) {
-    console.log('Invalid offset');
     apiResponse.addError({
       type: errorTypes.validations.invalid.query,
       message: `Query parameter _offset is invalid. Should be a number`,
@@ -23,8 +22,6 @@ export const validatePaginationParameters = (params: PaginationParameter) => {
   }
 
   if (limit && isNaN(limit)) {
-    console.log('Invalid limit');
-
     apiResponse.addError({
       type: errorTypes.validations.invalid.query,
       message: 'Query parameter _limit is invalid. Should be a number',
