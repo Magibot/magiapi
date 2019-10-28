@@ -1,4 +1,5 @@
 import mongoose from '../config/mongoose';
+import Playlist from './playlist.model';
 
 export interface ISong extends mongoose.Document {
   playlist: string;
@@ -51,6 +52,18 @@ export const SongSchema = new mongoose.Schema({
 });
 
 SongSchema.index({ playlist: 1, title: 1 }, { unique: true });
+
+SongSchema.pre('save', async function(next) {
+  const song = this as ISong;
+  await Playlist.findByIdAndInsertSong(song.playlist, song);
+  next();
+});
+
+SongSchema.pre('remove', async function(next) {
+  const song = this as ISong;
+  await Playlist.findByIdAndRemoveSong(song.playlist, song.id);
+  next();
+});
 
 export const Song = mongoose.model<ISong>('Song', SongSchema);
 
