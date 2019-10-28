@@ -24,7 +24,15 @@ router.use(authInterceptor);
 router.post('/', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
-    const guild = await Guild.create(request.body);
+    let guild = new Guild({
+      name: request.body.name,
+      discordId: request.body.discordId,
+      region: request.body.region,
+      discordOwnerId: request.body.discordOwnerId,
+      iconHash: request.body.iconHash
+    });
+    guild = await guild.save();
+
     apiResponse.setPayload({ guild });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
@@ -60,9 +68,8 @@ router.put('/:guildId', async (request, response) => {
   const { guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const guild = await Guild.findByIdAndUpdate(guildId, request.body, {
-      new: true
-    });
+    let guild = await Guild.findById(guildId);
+
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
@@ -72,6 +79,14 @@ router.put('/:guildId', async (request, response) => {
 
       return response.status(404).json(apiResponse.json());
     }
+
+    guild.name = request.body.name;
+    guild.discordId = request.body.discordId;
+    guild.region = request.body.region;
+    guild.discordOwnerId = request.body.discordOwnerId;
+    guild.iconHash = request.body.iconHash;
+
+    guild = await guild.save();
 
     apiResponse.setPayload({ guild });
     return response.status(200).json(apiResponse.json());
@@ -84,7 +99,11 @@ router.put('/:guildId', async (request, response) => {
 router.delete('/:guildId', async (request, response) => {
   const { guildId } = request.params;
   try {
-    await Guild.findByIdAndRemove(guildId);
+    const guild = await Guild.findById(guildId);
+    if (guild) {
+      await guild.remove();
+    }
+    
     return response.status(204).json();
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
