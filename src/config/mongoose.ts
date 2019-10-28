@@ -24,6 +24,7 @@ process.on('SIGINT', function() {
   });
 });
 
+
 export const createMongooseConnection = function() {
   mongoose
     .connect(env.mongoUri, {
