@@ -20,8 +20,7 @@ router.post('/', async (request, response) => {
   const { guildId } = request;
   const apiResponse = new ApiResponse();
   try {
-    const guild = await Guild.findById(guildId);
-    if (!guild) {
+    if (!(await Guild.findById(guildId))) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
         message: `Guild \`${guildId}\` does not exist`,
@@ -31,7 +30,14 @@ router.post('/', async (request, response) => {
       return response.status(404).json(apiResponse.json());
     }
 
-    const playlist = await Playlist.create({ ...request.body, guild: guildId });
+    let playlist = new Playlist({
+      guild: guildId,
+      name: request.body.name,
+      creator: request.body.creator,
+      allowModify: request.body.allowModify
+    });
+
+    playlist = await playlist.save();
     apiResponse.setPayload({ playlist });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
@@ -57,10 +63,16 @@ router.get('/:playlistId', async (request, response) => {
   const { playlistId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const playlist = await Playlist.findById(playlistId).populate(
-      request.query._populate,
-      'url addedBy title youtubeChannelId youtubeChannelName youtubeChannelUrl lengthSeconds createdAt'
-    );
+    let playlist;
+    if (request.query._populate) {
+      playlist = await Playlist.findById(playlistId).populate(
+        request.query._populate,
+        'url addedBy title youtubeChannelId youtubeChannelName youtubeChannelUrl lengthSeconds createdAt'
+      );
+    } else {
+      playlist = await Playlist.findById(playlistId);
+    }
+
     if (!playlist) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
@@ -83,11 +95,7 @@ router.put('/:playlistId', async (request, response) => {
   const { playlistId } = request.params;
   const apiResponse = new ApiResponse();
   try {
-    const playlist = await Playlist.findByIdAndUpdate(
-      playlistId,
-      request.body,
-      { new: true }
-    );
+    let playlist = await Playlist.findById(playlistId);
     if (!playlist) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
@@ -97,6 +105,11 @@ router.put('/:playlistId', async (request, response) => {
 
       return response.status(404).json(apiResponse.json());
     }
+
+    playlist.name = request.body.name;
+    playlist.creator = request.body.creator;
+    playlist.allowModify = request.body.allowModify;
+    playlist = await playlist.save();
 
     apiResponse.setPayload({ playlist });
     return response.status(200).json(apiResponse.json());
@@ -109,7 +122,11 @@ router.put('/:playlistId', async (request, response) => {
 router.delete('/:playlistId', async (request, response) => {
   const { playlistId } = request.params;
   try {
-    await Playlist.findByIdAndRemove(playlistId);
+    const playlist = await Playlist.findById(playlistId);
+    if (playlist) {
+      await playlist.remove();
+    }
+
     return response.status(204).json();
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);

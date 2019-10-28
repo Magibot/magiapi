@@ -1,14 +1,13 @@
 import express from 'express';
 
 // Models
-import Playlist from '../../../../models/playlist.model';
 import Song from '../../../../models/song.model';
 
 // Helpers
 import ApiResponse from '../../../../app/api.response';
 import exceptionHandler from '../../../../helpers/general.exception.handler';
+import Playlist from '../../../../models/playlist.model';
 
-// Types
 import errorTypes from '../../../../app/types/errors';
 
 const router = express.Router();
@@ -17,23 +16,45 @@ router.post('/', async (request, response) => {
   const { playlistId } = request;
   const apiResponse = new ApiResponse();
   try {
-    const playlist = await Playlist.findById(playlistId);
-    if (!playlist) {
+    if (!(await Playlist.findById(playlistId))) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
-        message: `Playlist \`${playlistId}\` does not exist`,
+        message: `Platlist \`${playlistId}\` does not exist`,
         kind: 'entity.notfound'
       });
 
       return response.status(404).json(apiResponse.json());
     }
 
-    const song = await Song.create({ ...request.body, playlist: playlistId });
-    playlist.songs.push(song.id);
-    await playlist.save();
+    if (await Song.findOne({ title: request.body.title, playlist: playlistId })) {
+      apiResponse.addError({
+        type: errorTypes.database.duplicate,
+        message: `Song \`${request.body.title}\` already exists in playlist`,
+        kind: 'database.duplicate'
+      });
+
+      return response.status(409).json(apiResponse.json());
+    }
+
+    let song = new Song({
+      playlist: playlistId,
+      url: request.body.url,
+      addedBy: request.body.addedBy,
+      title: request.body.title,
+      youtubeChannelId: request.body.youtubeChannelId,
+      youtubeChannelName: request.body.youtubeChannelName,
+      youtubeChannelUrl: request.body.youtubeChannelUrl,
+      lengthSeconds: request.body.lengthSeconds
+    });
+
+    song = await song.save();
     apiResponse.setPayload({ song });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
+    if (err instanceof ApiResponse) {
+      return response.status(404).json(err.json());
+    }
+
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
@@ -65,6 +86,17 @@ router.get('/:songId', async (request, response) => {
     } else {
       song = await Song.findById(songId);
     }
+
+    if (!song) {
+      apiResponse.addError({
+        type: errorTypes.entity.notfound,
+        message: `Song \`${songId}\` does not exist`,
+        kind: 'entity.notfound'
+      });
+
+      return response.status(404).json(apiResponse.json());
+    }
+
     apiResponse.setPayload({ song });
     return response.status(200).json(apiResponse.json());
   } catch (err) {
@@ -75,20 +107,19 @@ router.get('/:songId', async (request, response) => {
 
 router.delete('/:songId', async (request, response) => {
   const { songId } = request.params;
-  const { playlistId } = request;
   try {
-    await Song.findByIdAndDelete(songId);
-    const playlist = await Playlist.findById(playlistId);
-    if (playlist) {
-      const index = playlist.songs.indexOf(songId);
-      if (index > -1) {
-        playlist.songs.splice(index, 1);
-      }
-      await playlist.save();
+    const song = await Song.findById(songId);
+    if (song) {
+      await song.remove();
     }
 
     return response.status(204).json();
   } catch (err) {
+    if (err instanceof ApiResponse) {
+      const errorJson = err.json();
+      if (errorJson.errors && errorJson.errors[0].kind === 'entity.notfound')
+        return response.status(204).json();
+    }
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
