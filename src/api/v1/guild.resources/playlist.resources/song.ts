@@ -26,7 +26,9 @@ router.post('/', async (request, response) => {
       return response.status(404).json(apiResponse.json());
     }
 
-    if (await Song.findOne({ title: request.body.title, playlist: playlistId })) {
+    if (
+      await Song.findOne({ title: request.body.title, playlist: playlistId })
+    ) {
       apiResponse.addError({
         type: errorTypes.database.duplicate,
         message: `Song \`${request.body.title}\` already exists in playlist`,
@@ -53,9 +55,14 @@ router.post('/', async (request, response) => {
     return response.status(201).json(apiResponse.json());
   } catch (err) {
     if (err instanceof ApiResponse) {
-      return response.status(404).json(err.json());
+      const errorJson = err.json();
+      if (errorJson.errors && errorJson.errors[0].kind === 'entity.notfound') {
+        return response.status(204).json();
+      } else {
+        return response.status(400).json(errorJson);
+      }
     }
-
+    
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
@@ -118,8 +125,11 @@ router.delete('/:songId', async (request, response) => {
   } catch (err) {
     if (err instanceof ApiResponse) {
       const errorJson = err.json();
-      if (errorJson.errors && errorJson.errors[0].kind === 'entity.notfound')
+      if (errorJson.errors && errorJson.errors[0].kind === 'entity.notfound') {
         return response.status(204).json();
+      } else {
+        return response.status(400).json(errorJson);
+      }
     }
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
