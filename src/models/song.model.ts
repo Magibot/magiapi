@@ -14,6 +14,11 @@ export interface ISong extends mongoose.Document {
 }
 
 export const SongSchema = new mongoose.Schema({
+  guild: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Guild',
+    required: true
+  },
   playlist: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Playlist',
@@ -51,7 +56,7 @@ export const SongSchema = new mongoose.Schema({
   }
 });
 
-SongSchema.index({ playlist: 1, title: 1 }, { unique: true });
+SongSchema.index({ playlist: 1, title: 1, guild: 1 }, { unique: true });
 
 SongSchema.pre('save', async function(next) {
   const song = this as ISong;

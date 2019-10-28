@@ -13,7 +13,7 @@ import errorTypes from '../../../../app/types/errors';
 const router = express.Router();
 
 router.post('/', async (request, response) => {
-  const { playlistId } = request;
+  const { playlistId, guildId } = request;
   const apiResponse = new ApiResponse();
   try {
     if (!(await Playlist.findById(playlistId))) {
@@ -37,6 +37,7 @@ router.post('/', async (request, response) => {
     }
 
     let song = new Song({
+      guild: guildId,
       playlist: playlistId,
       url: request.body.url,
       addedBy: request.body.addedBy,
