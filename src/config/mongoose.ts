@@ -1,23 +1,37 @@
+import Logger from '../app/api.logger';
 import mongoose from 'mongoose';
 import env from './env';
 
 mongoose.Promise = global.Promise;
 
-export const createMongooseConnection = function(params?: {
-  logger?: boolean;
-}) {
+mongoose.connection.on('connected', function() {
+  Logger.ApiConsole.success('Opened connection with Mongo Database');
+});
+
+mongoose.connection.on('error', function(err) {
+  Logger.ApiConsole.error('Occured an error in Mongo connection');
+  Logger.ApiConsole.error(err);
+});
+
+mongoose.connection.on('disconnected', function() {
+  Logger.ApiConsole.normal('Disconnected from Mongo Database');
+});
+
+process.on('SIGINT', function() {
+  mongoose.connection.close(function() {
+    Logger.ApiConsole.normal('Closed Mongo Database connection');
+    process.exit(0);
+  });
+});
+
+export const createMongooseConnection = function() {
   mongoose
     .connect(env.mongoUri, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true
     })
-    .then(() => {
-      if (params && params.logger) {
-        console.log('Connected to Mongo Database');
-      }
-    })
-    .catch(err => console.error(err));
+    .catch(err => Logger.ApiConsole.error(err));
   return mongoose;
 };
 
