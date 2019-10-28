@@ -6,6 +6,7 @@ import Song from '../../../../models/song.model';
 // Helpers
 import ApiResponse from '../../../../app/api.response';
 import exceptionHandler from '../../../../helpers/general.exception.handler';
+import handlePagination from '../../../../helpers/pagination.handler';
 import Playlist from '../../../../models/playlist.model';
 
 import errorTypes from '../../../../app/types/errors';
@@ -62,7 +63,7 @@ router.post('/', async (request, response) => {
         return response.status(400).json(errorJson);
       }
     }
-    
+
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
@@ -71,8 +72,13 @@ router.post('/', async (request, response) => {
 router.get('/', async (request, response) => {
   const { playlistId } = request;
   const apiResponse = new ApiResponse();
+  // Pagination values
+  const { _offset, _limit } = request.query;
   try {
-    const songs = await Song.find({ playlist: playlistId });
+    let query = Song.find({ playlist: playlistId }).sort('createdAt');
+    query = handlePagination(query, { offset: _offset, limit: _limit });
+
+    const songs = await query.exec();
     apiResponse.setPayload({ songs });
     return response.status(200).json(apiResponse.json());
   } catch (err) {
