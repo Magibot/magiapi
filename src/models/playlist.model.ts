@@ -1,11 +1,13 @@
 import mongoose from '../config/mongoose';
 
 import Song, { ISong } from './song.model';
+import Guild from './guild.model';
+
 import ApiResponse from '../app/api.response';
 import errorTypes from '../app/types/errors';
 
 export interface IPlaylist extends mongoose.Document {
-  guildId: string;
+  guild: string;
   name: string;
   creator: string;
   allowModify: boolean;
@@ -123,8 +125,15 @@ PlaylistSchema.statics.findSongById = async function(
   return playlist.songs[index];
 };
 
+PlaylistSchema.pre('save', async function(next) {
+  const playlist = this as IPlaylist;
+  await Guild.createPlaylist(playlist.guild, playlist);
+  next();
+});
+
 PlaylistSchema.pre('remove', async function(next) {
   const playlist = this as IPlaylist;
+  await Guild.deletePlaylist(playlist.guild, playlist.id);
   await Song.deleteMany({ playlist: playlist.id });
   next();
 });

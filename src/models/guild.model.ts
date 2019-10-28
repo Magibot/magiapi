@@ -1,14 +1,24 @@
 import mongoose from '../config/mongoose';
-import Playlist  from './playlist.model';
-import Song  from './song.model';
+
+import Playlist, { IPlaylist } from './playlist.model';
+import Song from './song.model';
+
+import ApiResponse from '../app/api.response';
+import errorTypes from '../app/types/errors';
 
 export interface IGuild extends mongoose.Document {
   name: string;
   discordId: string;
   region: string;
   discordOwnerId: string;
+  playlists: Array<string>;
   iconHash: string;
   createdAt: Date;
+}
+
+export interface IGuildModel extends mongoose.Model<IGuild> {
+  createPlaylist: (id: string, playlist: IPlaylist) => IGuild;
+  deletePlaylist: (id: string, playlistId: string) => void;
 }
 
 export const GuildSchema = new mongoose.Schema({
@@ -19,7 +29,7 @@ export const GuildSchema = new mongoose.Schema({
   discordId: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   region: {
     type: String
@@ -31,12 +41,62 @@ export const GuildSchema = new mongoose.Schema({
   iconHash: {
     type: String
   },
+  playlists: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Playlist' }],
   createdAt: {
     type: Date,
     default: Date.now
   }
 });
 
+// Statics
+GuildSchema.statics.createPlaylist = async function(
+  id: string,
+  playlist: IPlaylist
+) {
+  const guild = await Guild.findById(id);
+  if (!guild) {
+    const apiResponse = new ApiResponse();
+    apiResponse.addError({
+      type: errorTypes.entity.notfound,
+      message: `Guild \`${id}\` does not exist`,
+      kind: 'entity.notfound'
+    });
+
+    throw apiResponse;
+  }
+
+  const index = guild.playlists.indexOf(playlist._id);
+  if (index > -1) {
+    return guild;
+  }
+
+  guild.playlists.push(playlist._id);
+  return await guild.save();
+};
+
+GuildSchema.statics.deletePlaylist = async function(id: string, playlistId: string) {
+  const guild = await Guild.findById(id);
+  if (!guild) {
+    const apiResponse = new ApiResponse();
+    apiResponse.addError({
+      type: errorTypes.entity.notfound,
+      message: `Guild \`${id}\` does not exist`,
+      kind: 'entity.notfound'
+    });
+
+    throw apiResponse;
+  }
+
+  const index = guild.playlists.indexOf(playlistId);
+  if (index < 0) {
+    return;
+  }
+
+  guild.playlists.splice(index, 1);
+  await guild.save();
+}
+
+// Middlewares
 GuildSchema.pre('remove', async function(next) {
   const guild = this as IGuild;
   await Song.deleteMany({ guild: guild._id });
@@ -44,6 +104,9 @@ GuildSchema.pre('remove', async function(next) {
   next();
 });
 
-export const Guild = mongoose.model<IGuild>('Guild', GuildSchema);
+export const Guild: IGuildModel = mongoose.model<IGuild, IGuildModel>(
+  'Guild',
+  GuildSchema
+);
 
 export default Guild;

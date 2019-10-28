@@ -45,7 +45,16 @@ router.get('/:guildId', async (request, response) => {
   const apiResponse = new ApiResponse();
   const { guildId } = request.params;
   try {
-    const guild = await Guild.findById(guildId);
+    let guild;
+    if (request.query._populate && request.query._populate === 'playlists') {
+      guild = await Guild.findById(guildId).populate(
+        request.query._populate,
+        'name creator allowModify createdAt songs'
+      );
+    } else {
+      guild = await Guild.findById(guildId);
+    }
+
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.entity.notfound,
@@ -103,7 +112,7 @@ router.delete('/:guildId', async (request, response) => {
     if (guild) {
       await guild.remove();
     }
-    
+
     return response.status(204).json();
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
