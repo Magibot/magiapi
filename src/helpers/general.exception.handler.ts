@@ -1,3 +1,4 @@
+import Logger from '../app/api.logger';
 import ApiResponse from '../app/api.response';
 import handleModelError from './model.error.handler';
 import errorTypes from '../app/types/errors';
@@ -31,7 +32,7 @@ export function exceptionHandler(error: any) {
     return { statusCode: 409, jsonResponse: apiResponse.json() };
   }
 
-  console.error(error);
+  Logger.ApiConsole.error(error);
   apiResponse.addError({
     type: errorTypes.internal.error,
     message: 'Something went wrong. Please contact a administrator',
