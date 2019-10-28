@@ -1,13 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
-import morgan from 'morgan';
 import cors from 'cors';
 
 import env from './env';
 
 import auth from '../api/v1/auth';
 import guild from '../api/v1/guild';
+import Logger from "../app/api.logger";
 
 /**
  * Extending the express.Request object
@@ -31,7 +31,7 @@ export const createExpressApplication = function() {
   app.set('port', env.port);
 
   // Middlewares
-  app.use(morgan('combined'));
+  app.use(Logger.ApiConsole.morganInterceptor);
   app.use(cors());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
