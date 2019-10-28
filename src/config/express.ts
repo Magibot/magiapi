@@ -6,6 +6,9 @@ import cors from 'cors';
 
 import env from './env';
 
+import auth from '../api/v1/auth';
+import guild from '../api/v1/guild';
+
 /**
  * Extending the express.Request object
  * to include mongo userId in the application
@@ -15,6 +18,8 @@ declare global {
   namespace Express {
     interface Request {
       userId: string;
+      guildId: string;
+      playlistId: string;
     }
   }
 }
@@ -31,6 +36,10 @@ export const createExpressApplication = function() {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(methodOverride());
+
+  // Routes
+  app.use('/api/v1/auth', auth);
+  app.use('/api/v1/guilds', guild);
 
   return app;
 };
