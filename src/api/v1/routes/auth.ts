@@ -1,14 +1,14 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 
-import ApiResponse from '../../app/api.response';
-import User from '../../models/user.model';
+import ApiResponse from '../../../app/api.response';
+import User from '../../../models/user.model';
 
-import exceptionHandler from '../../helpers/general.exception.handler';
-import generateJwt from '../../helpers/token.generator';
+import exceptionHandler from '../../../helpers/general.exception.handler';
+import generateJwt from '../../../helpers/token.generator';
 
-import errorTypes from '../../app/types/errors';
-import Guild from '../../models/guild.model';
+import errorTypes from '../../../app/types/errors';
+import Guild from '../../../models/guild.model';
 
 const router = express.Router();
 

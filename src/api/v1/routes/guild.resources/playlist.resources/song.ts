@@ -1,15 +1,15 @@
 import express from 'express';
 
 // Models
-import Song from '../../../../models/song.model';
+import Song from '../../../../../models/song.model';
 
 // Helpers
-import ApiResponse from '../../../../app/api.response';
-import exceptionHandler from '../../../../helpers/general.exception.handler';
-import handlePagination from '../../../../helpers/pagination.handler';
-import Playlist from '../../../../models/playlist.model';
+import ApiResponse from '../../../../../app/api.response';
+import exceptionHandler from '../../../../../helpers/general.exception.handler';
+import handlePagination from '../../../../../helpers/pagination.handler';
+import Playlist from '../../../../../models/playlist.model';
 
-import errorTypes from '../../../../app/types/errors';
+import errorTypes from '../../../../../app/types/errors';
 
 const router = express.Router();
 

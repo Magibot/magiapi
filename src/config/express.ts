@@ -4,9 +4,8 @@ import methodOverride from 'method-override';
 import cors from 'cors';
 
 import env from './env';
+import api from '../api';
 
-import auth from '../api/v1/auth';
-import guild from '../api/v1/guild';
 import Logger from "../app/api.logger";
 
 /**
@@ -38,8 +37,7 @@ export const createExpressApplication = function() {
   app.use(methodOverride());
 
   // Routes
-  app.use('/api/v1/auth', auth);
-  app.use('/api/v1/guilds', guild);
+  app.use('/api', api);
 
   return app;
 };

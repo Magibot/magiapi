@@ -1,17 +1,17 @@
 import express from 'express';
 
 // Models
-import Guild from '../../models/guild.model';
+import Guild from '../../../models/guild.model';
 
 // Middlewares
-import clientIdentificationInterceptor from '../../middleware/client.identification.interceptor';
+import clientIdentificationInterceptor from '../../../middleware/client.identification.interceptor';
 
 // Helpers
-import ApiResponse from '../../app/api.response';
-import exceptionHandler from '../../helpers/general.exception.handler';
+import ApiResponse from '../../../app/api.response';
+import exceptionHandler from '../../../helpers/general.exception.handler';
 
 // Types
-import errorTypes from '../../app/types/errors';
+import errorTypes from '../../../app/types/errors';
 
 // Resources
 import playlistRouter from './guild.resources/playlist';

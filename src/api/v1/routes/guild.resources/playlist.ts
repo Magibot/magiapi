@@ -1,19 +1,19 @@
 import express from 'express';
 
 // Models
-import Guild from '../../../models/guild.model';
-import Playlist from '../../../models/playlist.model';
+import Guild from '../../../../models/guild.model';
+import Playlist from '../../../../models/playlist.model';
 
 // Middlewares
-import authMiddleware from '../../../middleware/auth.middleware';
+import authMiddleware from '../../../../middleware/auth.middleware';
 
 // Helpers
-import ApiResponse from '../../../app/api.response';
-import exceptionHandler from '../../../helpers/general.exception.handler';
-import handlePagination from '../../../helpers/pagination.handler';
+import ApiResponse from '../../../../app/api.response';
+import exceptionHandler from '../../../../helpers/general.exception.handler';
+import handlePagination from '../../../../helpers/pagination.handler';
 
 // Types
-import errorTypes from '../../../app/types/errors';
+import errorTypes from '../../../../app/types/errors';
 
 // Resources
 import songRouter from './playlist.resources/song';
