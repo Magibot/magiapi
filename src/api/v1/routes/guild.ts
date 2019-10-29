@@ -4,7 +4,7 @@ import express from 'express';
 import Guild from '../../../models/guild.model';
 
 // Middlewares
-import clientIdentificationInterceptor from '../../../middleware/client.identification.interceptor';
+import clientIdentificationInterceptor from '../middleware/client.identification.interceptor';
 
 // Helpers
 import ApiResponse from '../../../app/api.response';

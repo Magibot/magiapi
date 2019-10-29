@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 
-import ApiResponse from '../app/api.response';
-import errorTypes from '../app/types/errors';
+import ApiResponse from '../../../app/api.response';
+import errorTypes from '../../../app/types/errors';
 
-import Client from '../models/client.model';
-import exceptionHandler from '../helpers/general.exception.handler';
+import Client from '../../../models/client.model';
+import exceptionHandler from '../../../helpers/general.exception.handler';
 
 // Protection by Client Identification, only registered clients can access the routes
 

@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
-import ApiResponse from '../app/api.response';
+import ApiResponse from '../../../app/api.response';
 
-import errorTypes from '../app/types/errors';
+import errorTypes from '../../../app/types/errors';
 
 import bearerAuthenticationInterceptor from './bearer.auth.interceptor';
 import clientIdentificationInterceptor from './client.identification.interceptor';

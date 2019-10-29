@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import env from '../config/env';
+import env from '../../../config/env';
 
-import ApiResponse from '../app/api.response';
-import Logger from '../app/api.logger';
+import ApiResponse from '../../../app/api.response';
+import Logger from '../../../app/api.logger';
 
-import errorTypes from '../app/types/errors';
+import errorTypes from '../../../app/types/errors';
 
 // Protection by Beare Authorization, only logged user can access routes
 
