@@ -8,12 +8,35 @@ import exceptionHandler from '../../helpers/general.exception.handler';
 import generateJwt from '../../helpers/token.generator';
 
 import errorTypes from '../../app/types/errors';
+import Guild from '../../models/guild.model';
 
 const router = express.Router();
 
 router.post('/register', async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
+    const { discord_id } = request.headers;
+    if (!discord_id) {
+      apiResponse.addError({
+        type: errorTypes.validations.required,
+        message: 'Missing header `discord_id` for guild identification',
+        kind: 'validations.required'
+      });
+
+      return response.status(400).json(apiResponse.json());
+    }
+
+    const guild = await Guild.findOne({ discordId: discord_id });
+    if (!guild) {
+      apiResponse.addError({
+        type: errorTypes.validations.invalid.headers,
+        message: 'This discord guild is not registered. Please enter within a valid discord server',
+        kind: 'validations.invalid.headers'
+      });
+
+      return response.status(400).json(apiResponse.json());
+    }
+
     const user = await User.create(request.body);
     const token = generateJwt({ id: user.id });
     user.password = undefined;

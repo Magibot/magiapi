@@ -3,7 +3,8 @@ export const errors = {
     required: 'ValidationError',
     invalid: {
       id: 'InvalidObjectId',
-      query: 'InvalidQueryParameter'
+      query: 'InvalidQueryParameter',
+      headers: 'InvalidHeaders'
     }
   },
   authentication: {
