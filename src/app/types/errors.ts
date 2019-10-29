@@ -10,7 +10,9 @@ export const errors = {
   authentication: {
     badpassword: 'InvalidPassword',
     error: {
-      token: 'TokenError'
+      token: 'TokenError',
+      client: 'ClientRegisterError',
+      type: 'AuthorizationType'
     }
   },
   entity: {
