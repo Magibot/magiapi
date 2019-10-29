@@ -30,7 +30,7 @@ router.post('/register', async (request, response) => {
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.validations.invalid.headers,
-        message: 'This discord guild is not registered. Please enter within a valid discord server',
+        message: 'This discord guild does not exist',
         kind: 'validations.invalid.headers'
       });
 
@@ -54,16 +54,16 @@ router.post('/authenticate', async (request, response) => {
   if (!username) {
     apiResponse.addError({
       type: errorTypes.validations.required,
-      kind: 'validations.required',
-      message: 'Field `username` is required'
+      message: 'Field `username` is required',
+      kind: 'validations.required'
     });
   }
 
   if (!password) {
     apiResponse.addError({
       type: errorTypes.validations.required,
-      kind: 'validations.required',
-      message: 'Field `password` is required'
+      message: 'Field `password` is required',
+      kind: 'validations.required'
     });
   }
 
@@ -92,7 +92,9 @@ router.post('/authenticate', async (request, response) => {
 
   user.password = undefined;
 
-  return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
+  return response
+    .status(201)
+    .json({ user, token: generateJwt({ id: user.id }) });
 });
 
 export default router;
