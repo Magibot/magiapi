@@ -4,7 +4,7 @@ import express from 'express';
 import Guild from '../../models/guild.model';
 
 // Middlewares
-import authInterceptor from '../../middleware/auth.interceptor';
+import clientIdentificationInterceptor from '../../middleware/client.identification.interceptor';
 
 // Helpers
 import ApiResponse from '../../app/api.response';
@@ -18,10 +18,7 @@ import playlistRouter from './guild.resources/playlist';
 
 const router = express.Router();
 
-// Use authentication interceptor to protect the routes of guild
-router.use(authInterceptor);
-
-router.post('/', async (request, response) => {
+router.post('/', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     let guild = new Guild({
@@ -73,7 +70,7 @@ router.get('/:guildId', async (request, response) => {
   }
 });
 
-router.put('/:guildId', async (request, response) => {
+router.put('/:guildId', clientIdentificationInterceptor, async (request, response) => {
   const { guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
@@ -105,7 +102,7 @@ router.put('/:guildId', async (request, response) => {
   }
 });
 
-router.delete('/:guildId', async (request, response) => {
+router.delete('/:guildId', clientIdentificationInterceptor, async (request, response) => {
   const { guildId } = request.params;
   try {
     const guild = await Guild.findById(guildId);

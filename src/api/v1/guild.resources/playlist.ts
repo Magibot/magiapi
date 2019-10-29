@@ -4,6 +4,9 @@ import express from 'express';
 import Guild from '../../../models/guild.model';
 import Playlist from '../../../models/playlist.model';
 
+// Middlewares
+import authMiddleware from '../../../middleware/auth.middleware';
+
 // Helpers
 import ApiResponse from '../../../app/api.response';
 import exceptionHandler from '../../../helpers/general.exception.handler';
@@ -16,6 +19,8 @@ import errorTypes from '../../../app/types/errors';
 import songRouter from './playlist.resources/song';
 
 const router = express.Router();
+
+router.use(authMiddleware);
 
 router.post('/', async (request, response) => {
   const { guildId } = request;
