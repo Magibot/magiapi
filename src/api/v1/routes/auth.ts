@@ -10,7 +10,7 @@ import generateJwt from '../../../helpers/token.generator';
 import errorTypes from '../../../app/types/errors';
 import Guild from '../../../models/guild.model';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/register', async (request, response) => {
   const apiResponse = new ApiResponse();
@@ -92,9 +92,7 @@ router.post('/authenticate', async (request, response) => {
 
   user.password = undefined;
 
-  return response
-    .status(201)
-    .json({ user, token: generateJwt({ id: user.id }) });
+  return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
 });
 
 export default router;

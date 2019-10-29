@@ -16,7 +16,7 @@ import errorTypes from '../../../app/types/errors';
 // Resources
 import playlistRouter from './guild.resources/playlist';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
@@ -117,10 +117,10 @@ router.delete('/:guildId', clientIdentificationInterceptor, async (request, resp
   }
 });
 
-router.use('/:guildId/playlists', async (request, response, next) => {
-  request.guildId = request.params.guildId;
-  next();
-});
+// router.use('/:guildId/playlists', async (request, response, next) => {
+//   request.guildId = request.params.guildId;
+//   next();
+// });
 
 router.use('/:guildId/playlists', playlistRouter);
 

@@ -18,12 +18,12 @@ import errorTypes from '../../../../app/types/errors';
 // Resources
 import songRouter from './playlist.resources/song';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.use(authMiddleware);
 
 router.post('/', async (request, response) => {
-  const { guildId } = request;
+  const { guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
     if (!(await Guild.findById(guildId))) {
@@ -53,7 +53,7 @@ router.post('/', async (request, response) => {
 });
 
 router.get('/', async (request, response) => {
-  const { guildId } = request;
+  const { guildId } = request.params;
   const apiResponse = new ApiResponse();
 
   // Pagination values
@@ -75,7 +75,7 @@ router.get('/', async (request, response) => {
         return response.status(400).json(errorJson);
       }
     }
-    
+
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
   }
@@ -156,10 +156,10 @@ router.delete('/:playlistId', async (request, response) => {
   }
 });
 
-router.use('/:playlistId/songs', async (request, response, next) => {
-  request.playlistId = request.params.playlistId;
-  next();
-});
+// router.use('/:playlistId/songs', async (request, response, next) => {
+//   request.playlistId = request.params.playlistId;
+//   next();
+// });
 
 router.use('/:playlistId/songs', songRouter);
 

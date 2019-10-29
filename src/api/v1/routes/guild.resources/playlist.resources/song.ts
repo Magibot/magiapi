@@ -11,10 +11,10 @@ import Playlist from '../../../../../models/playlist.model';
 
 import errorTypes from '../../../../../app/types/errors';
 
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 router.post('/', async (request, response) => {
-  const { playlistId, guildId } = request;
+  const { playlistId, guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
     if (!(await Playlist.findById(playlistId))) {
@@ -27,9 +27,7 @@ router.post('/', async (request, response) => {
       return response.status(404).json(apiResponse.json());
     }
 
-    if (
-      await Song.findOne({ title: request.body.title, playlist: playlistId })
-    ) {
+    if (await Song.findOne({ title: request.body.title, playlist: playlistId })) {
       apiResponse.addError({
         type: errorTypes.database.duplicate,
         message: `Song \`${request.body.title}\` already exists in playlist`,
@@ -70,7 +68,7 @@ router.post('/', async (request, response) => {
 });
 
 router.get('/', async (request, response) => {
-  const { playlistId } = request;
+  const { playlistId } = request.params;
   const apiResponse = new ApiResponse();
   // Pagination values
   const { _offset, _limit } = request.query;
