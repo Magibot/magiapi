@@ -9,7 +9,7 @@ export function exceptionHandler(error: any) {
 
   if (processedError) {
     apiResponse.setError(processedError);
-    return { statusCode: 400, jsonResponse: apiResponse.json() };
+    return { statusCode: 400, jsonResponse: apiResponse.json(), type: 'ModelError' };
   }
 
   if (error.name === 'CastError' && error.kind === 'ObjectId') {
@@ -19,7 +19,7 @@ export function exceptionHandler(error: any) {
       message: `\`${error.value}\` is not a valid object ID.`
     });
 
-    return { statusCode: 400, jsonResponse: apiResponse.json() };
+    return { statusCode: 400, jsonResponse: apiResponse.json(), type: 'ObjectIdCastError' };
   }
 
   if (error.name === 'MongoError' && error.code === 11000) {
@@ -29,7 +29,7 @@ export function exceptionHandler(error: any) {
       kind: 'database.duplicate'
     });
 
-    return { statusCode: 409, jsonResponse: apiResponse.json() };
+    return { statusCode: 409, jsonResponse: apiResponse.json(), type: 'DuplicateError' };
   }
 
   Logger.ApiConsole.error(error);
@@ -39,7 +39,7 @@ export function exceptionHandler(error: any) {
     kind: 'internal.error'
   });
 
-  return { statusCode: 500, jsonResponse: apiResponse.json() };
+  return { statusCode: 500, jsonResponse: apiResponse.json(), type: 'InternalError' };
 }
 
 export default exceptionHandler;
