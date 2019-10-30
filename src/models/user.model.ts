@@ -6,7 +6,7 @@ import env from '../config/env';
 import { addDaysToDate } from '../helpers/date.helper';
 
 export const generateJwt = (payload = {}) => {
-  return jwt.sign(payload, env.tokenSecret, { expiresIn: 3600 });
+  return jwt.sign(payload, env.tokenSecret, { expiresIn: env.tokenExpirationTime });
 };
 
 const generateRandomNumber = () => {
@@ -61,7 +61,7 @@ const UserSchema = new mongoose.Schema({
   },
   temporaryPasswordExpirationDate: {
     type: Date,
-    default: addDaysToDate(new Date(), 3)
+    default: addDaysToDate(new Date(), env.daysToExpireTemporaryPassword)
   },
   isValid: {
     type: Boolean,
@@ -172,7 +172,7 @@ UserSchema.pre<IUser>('save', async function(next) {
   }
 
   if (user.temporaryPassword && user.isModified('temporaryPassword')) {
-    user.temporaryPasswordExpirationDate = addDaysToDate(new Date(), 3);
+    user.temporaryPasswordExpirationDate = addDaysToDate(new Date(), env.daysToExpireTemporaryPassword);
   }
 
   next();

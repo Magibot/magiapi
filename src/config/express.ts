@@ -28,7 +28,8 @@ export const createExpressApplication = function() {
 
   // Enviroment setup
   app.set('port', env.port);
-
+  app.set('tokenExpirationTime', env.tokenExpirationTime);
+  
   // Middlewares
   app.use(Logger.ApiConsole.morganInterceptor);
   app.use(cors());

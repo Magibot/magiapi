@@ -3,9 +3,12 @@ import path from 'path';
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 class Configuration {
-  port: string = '';
+  port: number = 3030;
   tokenSecret: string = '';
   mongoUri: string = '';
+
+  tokenExpirationTime: number = 3600;
+  daysToExpireTemporaryPassword: number = 3;
 }
 
 const config: Configuration = new Configuration();
@@ -20,8 +23,24 @@ for (let i = 0; i < requiredVariables.length; i++) {
   }
 }
 
-config.port = process.env.PORT ? process.env.PORT : '';
-config.tokenSecret = process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET : '';
-config.mongoUri = process.env.MONGODB_URI ? process.env.MONGODB_URI : '';
+const {
+  PORT,
+  TOKEN_SECRET,
+  MONGODB_URI,
+  TOKEN_EXPIRATION_TIME,
+  DAYS_EXPIRE_TEMPORARY_PASSWORD
+} = process.env;
+
+config.port = PORT ? parseInt(PORT) : config.port;
+config.tokenSecret = TOKEN_SECRET ? TOKEN_SECRET : '';
+config.mongoUri = MONGODB_URI ? MONGODB_URI : '';
+
+config.tokenExpirationTime = TOKEN_EXPIRATION_TIME
+  ? parseInt(TOKEN_EXPIRATION_TIME)
+  : config.tokenExpirationTime;
+
+config.daysToExpireTemporaryPassword = DAYS_EXPIRE_TEMPORARY_PASSWORD
+  ? parseInt(DAYS_EXPIRE_TEMPORARY_PASSWORD)
+  : config.daysToExpireTemporaryPassword;
 
 export default config;
