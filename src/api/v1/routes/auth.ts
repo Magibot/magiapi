@@ -10,10 +10,11 @@ import errorTypes from '../../../app/types/errors';
 import Guild from '../../../models/guild.model';
 
 import bearerAuthenticationInterceptor from '../middleware/bearer.auth.interceptor';
+import clientIdentificationInterceptor from '../middleware/client.identification.interceptor';
 
 const router = express.Router({ mergeParams: true });
 
-router.post('/register', async (request, response) => {
+router.post('/register', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
     const { discord_id } = request.headers;
@@ -111,7 +112,9 @@ router.post('/authenticate', async (request, response) => {
 
   const { accessToken } = user;
   user.hideSensibleData();
-  return response.status(201).json({ user, token: accessToken });
+
+  apiResponse.setPayload({ user, token: accessToken });
+  return response.status(201).json(apiResponse.json());
 });
 
 router.post(
@@ -165,7 +168,7 @@ router.post(
   }
 );
 
-router.post('/reset-password', async (request, response) => {
+router.post('/reset-password', clientIdentificationInterceptor, async (request, response) => {
   const { username } = request.body;
   const apiResponse = new ApiResponse();
   const user = await User.findOne({ username }).select(
