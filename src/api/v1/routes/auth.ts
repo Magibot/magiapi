@@ -9,6 +9,8 @@ import exceptionHandler from '../../../helpers/general.exception.handler';
 import errorTypes from '../../../app/types/errors';
 import Guild from '../../../models/guild.model';
 
+import bearerAuthenticationInterceptor from '../middleware/bearer.auth.interceptor';
+
 const router = express.Router({ mergeParams: true });
 
 router.post('/register', async (request, response) => {
@@ -133,6 +135,16 @@ router.post('/authenticate', async (request, response) => {
   const { accessToken } = user;
   user.hideSensibleData();
   return response.status(201).json({ user, token: accessToken });
+});
+
+router.post('/logout', bearerAuthenticationInterceptor, async (request, response) => {
+  const user = await User.findById(request.userId).select('+accessToken');
+  if (user) {
+    await user.resetAccessToken();
+    await user.save();
+  }
+
+  return response.status(204).json();
 });
 
 export default router;
