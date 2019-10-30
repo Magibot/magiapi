@@ -1,5 +1,5 @@
+import env from '../../../config/env';
 import express from 'express';
-import bcrypt from 'bcryptjs';
 
 import ApiResponse from '../../../app/api.response';
 import User from '../../../models/user.model';
@@ -46,8 +46,9 @@ router.post('/register', async (request, response) => {
     const { accessToken, temporaryPassword, temporaryPasswordExpirationDate } = user;
     apiResponse.setPayload({
       token: accessToken,
+      tokenExpiresIn: env.tokenExpirationTime,
       password: temporaryPassword,
-      expirationDate: temporaryPasswordExpirationDate
+      expirationDate: temporaryPasswordExpirationDate,
     });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
