@@ -1,4 +1,5 @@
 import mongoose from '../config/mongoose';
+import validator from 'validator';
 
 export interface IClient extends mongoose.Document {
   name: string;
@@ -7,11 +8,10 @@ export interface IClient extends mongoose.Document {
   contactEmail: string;
 }
 
-
 const ClientSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
+    required: true
   },
   usage: {
     type: String,
@@ -28,6 +28,10 @@ const ClientSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+ClientSchema.path('contactEmail').validate(function(value: string) {
+  return validator.isEmail(value);
+}, 'Invalid email');
 
 const Client = mongoose.model<IClient>('Client', ClientSchema);
 
