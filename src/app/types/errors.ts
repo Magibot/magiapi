@@ -8,7 +8,10 @@ export const errors = {
     }
   },
   authentication: {
-    badpassword: 'InvalidPassword',
+    password: {
+      invalid: 'InvalidPassword',
+      expired: 'PasswordExpired'
+    },
     error: {
       token: 'TokenError',
       client: 'ClientRegisterError',

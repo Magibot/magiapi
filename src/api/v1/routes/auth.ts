@@ -38,14 +38,18 @@ router.post('/register', async (request, response) => {
     }
 
     let user = new User({
-      username: request.body.username,
-      password: Math.floor(Math.random() * 10000) + 1000
+      username: request.body.username
     });
 
     user = await user.save();
     const token = generateJwt({ id: user.id });
-    user.password = undefined;
-    apiResponse.setPayload({ user, token });
+
+    const { temporaryPassword, temporaryPasswordExpirationDate } = user;
+    apiResponse.setPayload({
+      token,
+      password: temporaryPassword,
+      expirationDate: temporaryPasswordExpirationDate
+    });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
@@ -76,7 +80,7 @@ router.post('/authenticate', async (request, response) => {
     return response.status(400).json(apiResponse.json());
   }
 
-  const user = await User.findOne({ username }).select('+password');
+  const user = await User.findOne({ username }).select('+password +temporaryPassword');
   if (!user) {
     apiResponse.addError({
       type: errorTypes.entity.notfound,
@@ -86,17 +90,42 @@ router.post('/authenticate', async (request, response) => {
     return response.status(404).send(apiResponse.json());
   }
 
+  const { isValid } = await User.verifyTemporaryPassword(user);
+  if (isValid) {
+    if (user.temporaryPassword !== password) {
+      apiResponse.addError({
+        type: errorTypes.authentication.password.invalid,
+        message: 'Wrong password',
+        kind: 'authentication.password.invalid'
+      });
+
+      return response.status(400).send(apiResponse.json());
+    }
+
+    user.hideSensibleData();
+    return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
+  }
+
+  if (!user.password) {
+    apiResponse.addError({
+      type: errorTypes.authentication.password.expired,
+      message: 'Temporary password expired. Please create a new password for your account',
+      kind: 'authentication.password.expired'
+    });
+
+    return response.status(400).json(apiResponse.json());
+  }
+
   if (!(await bcrypt.compare(password, user.password))) {
     apiResponse.addError({
-      type: errorTypes.authentication.badpassword,
+      type: errorTypes.authentication.password.invalid,
       message: 'Wrong password',
-      kind: 'authentication.badpassword'
+      kind: 'authentication.password.invalid'
     });
     return response.status(400).send(apiResponse.json());
   }
 
-  user.password = undefined;
-
+  user.hideSensibleData();
   return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
 });
 
