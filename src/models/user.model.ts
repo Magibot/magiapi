@@ -6,7 +6,9 @@ import env from '../config/env';
 import { addDaysToDate } from '../helpers/date.helper';
 
 export const generateJwt = (payload = {}) => {
-  return jwt.sign(payload, env.tokenSecret, { expiresIn: env.tokenExpirationTime });
+  return jwt.sign(payload, env.tokenSecret, {
+    expiresIn: env.tokenExpirationTime
+  });
 };
 
 const generateRandomNumber = () => {
@@ -26,7 +28,9 @@ export interface IUser extends mongoose.Document {
   hideSensibleData: () => void;
   generateAccessToken: () => void;
   resetAccessToken: () => void;
-  comparePassword: (password: string) => { ok?: boolean, error?: { name: string; message: string } }
+  comparePassword: (
+    password: string
+  ) => { ok?: boolean; error?: { name: string; message: string } };
 }
 
 export interface IUserModel extends mongoose.Model<IUser> {
@@ -89,6 +93,15 @@ UserSchema.statics.verifyTemporaryPassword = async function(user: IUser) {
 
 UserSchema.statics.verifyToken = async function(token: string) {
   try {
+    if (!(await User.findOne({ accessToken: token }).select('+accessToken'))) {
+      return {
+        error: {
+          name: 'TokenAuthenticationError',
+          message: 'User is not authenticated'
+        }
+      };
+    }
+
     const decoded = jwt.verify(token, env.tokenSecret);
     if (typeof decoded === 'string') {
       return {
@@ -105,7 +118,9 @@ UserSchema.statics.verifyToken = async function(token: string) {
     return { user };
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
-      const user = await User.findOne({ token });
+      const user = await User.findOne({ accessToken: token }).select(
+        '+accessToken'
+      );
       if (user) {
         await user.resetAccessToken();
       }
@@ -172,7 +187,10 @@ UserSchema.pre<IUser>('save', async function(next) {
   }
 
   if (user.temporaryPassword && user.isModified('temporaryPassword')) {
-    user.temporaryPasswordExpirationDate = addDaysToDate(new Date(), env.daysToExpireTemporaryPassword);
+    user.temporaryPasswordExpirationDate = addDaysToDate(
+      new Date(),
+      env.daysToExpireTemporaryPassword
+    );
   }
 
   next();
