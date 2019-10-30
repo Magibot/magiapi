@@ -5,7 +5,6 @@ import ApiResponse from '../../../app/api.response';
 import User from '../../../models/user.model';
 
 import exceptionHandler from '../../../helpers/general.exception.handler';
-import generateJwt from '../../../helpers/token.generator';
 
 import errorTypes from '../../../app/types/errors';
 import Guild from '../../../models/guild.model';
@@ -42,11 +41,11 @@ router.post('/register', async (request, response) => {
     });
 
     user = await user.save();
-    const token = generateJwt({ id: user.id });
+    await user.generateAccessToken();
 
-    const { temporaryPassword, temporaryPasswordExpirationDate } = user;
+    const { accessToken, temporaryPassword, temporaryPasswordExpirationDate } = user;
     apiResponse.setPayload({
-      token,
+      token: accessToken,
       password: temporaryPassword,
       expirationDate: temporaryPasswordExpirationDate
     });
@@ -80,7 +79,7 @@ router.post('/authenticate', async (request, response) => {
     return response.status(400).json(apiResponse.json());
   }
 
-  const user = await User.findOne({ username }).select('+password +temporaryPassword');
+  const user = await User.findOne({ username }).select('+password +temporaryPassword +accessToken');
   if (!user) {
     apiResponse.addError({
       type: errorTypes.entity.notfound,
@@ -102,8 +101,10 @@ router.post('/authenticate', async (request, response) => {
       return response.status(400).send(apiResponse.json());
     }
 
+    await user.generateAccessToken();
+    const { accessToken } = user;
     user.hideSensibleData();
-    return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
+    return response.status(201).json({ user, token: accessToken });
   }
 
   if (!user.password) {
@@ -116,17 +117,21 @@ router.post('/authenticate', async (request, response) => {
     return response.status(400).json(apiResponse.json());
   }
 
-  if (!(await bcrypt.compare(password, user.password))) {
+  const { error } = await user.comparePassword(password);
+  if (error) {
     apiResponse.addError({
       type: errorTypes.authentication.password.invalid,
-      message: 'Wrong password',
+      message: error.message,
       kind: 'authentication.password.invalid'
     });
+
     return response.status(400).send(apiResponse.json());
   }
 
+  await user.generateAccessToken();
+  const { accessToken } = user;
   user.hideSensibleData();
-  return response.status(201).json({ user, token: generateJwt({ id: user.id }) });
+  return response.status(201).json({ user, token: accessToken });
 });
 
 export default router;

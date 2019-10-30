@@ -6,10 +6,11 @@ import ApiResponse from '../../../app/api.response';
 import Logger from '../../../app/api.logger';
 
 import errorTypes from '../../../app/types/errors';
+import User from '../../../models/user.model';
 
 // Protection by Beare Authorization, only logged user can access routes
 
-export default function(
+export default async function(
   request: Request,
   response: Response,
   next: NextFunction
@@ -43,19 +44,16 @@ export default function(
     return response.status(401).json(apiResponse.json());
   }
 
-  try {
-    const decoded = jwt.verify(token, env.tokenSecret);
-    if (typeof decoded === 'string') {
-      Logger.ApiConsole.normal(decoded);
-      return;
-    }
-
-    request.userId = (decoded as any).id;
-    next();
-  } catch (error) {
-    Logger.ApiConsole.error(error);
-    errorResponse.message = 'Error on processing token. Invalid token';
+  const { user, error } = await User.verifyToken(token);
+  if (error) {
+    errorResponse.message = error.message;
     apiResponse.addError(errorResponse);
-    return response.status(401).json(apiResponse.json());
+    return response.status(401).json(apiResponse.json())
   }
+
+  if (user) {
+    request.userId = user.id;
+  }
+
+  next();
 }

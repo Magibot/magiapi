@@ -1,7 +1,13 @@
 import mongoose from '../config/mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import env from '../config/env';
 
 import { addDaysToDate } from '../helpers/date.helper';
+
+export const generateJwt = (payload = {}) => {
+  return jwt.sign(payload, env.tokenSecret, { expiresIn: 3600 });
+};
 
 const generateRandomNumber = () => {
   return Math.floor(Math.random() * 10000) + 1000;
@@ -14,13 +20,20 @@ export interface IUser extends mongoose.Document {
   createdAt: Date;
   temporaryPasswordExpirationDate: Date;
   isValid: boolean;
+  accessToken: any;
 
   generateTemporaryPassword: () => void;
   hideSensibleData: () => void;
+  generateAccessToken: () => void;
+  resetAccessToken: () => void;
+  comparePassword: (password: string) => { ok?: boolean, error?: { name: string; message: string } }
 }
 
 export interface IUserModel extends mongoose.Model<IUser> {
   verifyTemporaryPassword: (user: IUser) => { isValid: boolean };
+  verifyToken: (
+    token: string
+  ) => { user?: IUser; error?: { name: string; message: string } };
 }
 
 const UserSchema = new mongoose.Schema({
@@ -35,6 +48,10 @@ const UserSchema = new mongoose.Schema({
     default: generateRandomNumber
   },
   password: {
+    type: String,
+    select: false
+  },
+  accessToken: {
     type: String,
     select: false
   },
@@ -70,6 +87,45 @@ UserSchema.statics.verifyTemporaryPassword = async function(user: IUser) {
   return { isValid: true };
 };
 
+UserSchema.statics.verifyToken = async function(token: string) {
+  try {
+    const decoded = jwt.verify(token, env.tokenSecret);
+    if (typeof decoded === 'string') {
+      return {
+        error: { name: 'TokenDecodeError', message: 'Wrong type of token' }
+      };
+    }
+
+    const id = (decoded as any).id;
+    const user = await User.findById(id);
+    if (!user) {
+      return { error: { name: 'UserNotFound', message: 'User was deleted' } };
+    }
+
+    return { user };
+  } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      const user = await User.findOne({ token });
+      if (user) {
+        await user.resetAccessToken();
+      }
+      return {
+        error: {
+          name: err.name,
+          message: 'Token is expired. Please generate a new token'
+        }
+      };
+    }
+
+    return {
+      error: {
+        name: 'InvalidToken',
+        message: 'Invalid token. Error on processing token'
+      }
+    };
+  }
+};
+
 // Object methods
 UserSchema.methods.generateTemporaryPassword = function() {
   (this as IUser).temporaryPassword = generateRandomNumber();
@@ -78,6 +134,34 @@ UserSchema.methods.generateTemporaryPassword = function() {
 UserSchema.methods.hideSensibleData = function() {
   (this as IUser).password = undefined;
   (this as IUser).temporaryPassword = undefined;
+  (this as IUser).accessToken = undefined;
+};
+
+UserSchema.methods.generateAccessToken = async function() {
+  const id = (this as IUser).id;
+  const token = (this as IUser).accessToken;
+  const { user, error } = await User.verifyToken(token);
+
+  // No need to generate a new access token
+  if (user && user.id === id) {
+    return;
+  }
+
+  (this as IUser).accessToken = generateJwt({ id });
+  await (this as IUser).save();
+};
+
+UserSchema.methods.resetAccessToken = async function() {
+  (this as IUser).accessToken = undefined;
+  await (this as IUser).save();
+};
+
+UserSchema.methods.comparePassword = async function(password: string) {
+  if (!(await bcrypt.compare(password, (this as IUser).password))) {
+    return { error: { name: 'BadPassword', message: 'Wrong password' } };
+  }
+
+  return { ok: true };
 };
 
 // Middlewares
