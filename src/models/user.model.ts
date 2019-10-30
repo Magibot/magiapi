@@ -121,6 +121,10 @@ UserSchema.statics.verifyToken = async function(token: string) {
 UserSchema.methods.generateTemporaryPassword = async function() {
   const user = this as IUser;
   user.password = generateRandomNumber();
+  user.passwordExpirationDate = addDaysToDate(
+    new Date(),
+    env.daysToExpireTemporaryPassword
+  );
   return user.password;
 };
 
@@ -163,16 +167,10 @@ UserSchema.methods.checkPassword = async function(password: string) {
         }
       };
     }
-
-    if (password !== user.password) {
-      return { error: { name: 'InvalidPassword', message: 'Wrong password' } };
-    }
-
-    return { ok: true };
   }
 
   if (!(await bcrypt.compare(password, user.password))) {
-    return { error: { name: 'InvalidPasswor', message: 'Wrong password' } };
+    return { error: { name: 'InvalidPassword', message: 'Wrong password' } };
   }
 
   return { ok: true };
@@ -181,11 +179,7 @@ UserSchema.methods.checkPassword = async function(password: string) {
 // Middlewares
 UserSchema.pre<IUser>('save', async function(next) {
   if (this.isModified('password')) {
-    if (!this.isValidated) {
-      this.passwordExpirationDate = addDaysToDate(new Date(), env.daysToExpireTemporaryPassword);
-    } else {
-      this.password = await bcrypt.hash(this.password, 10);
-    }
+    this.password = await bcrypt.hash(this.password, 10);
   }
 
   next();
