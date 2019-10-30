@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-import env from '../../../config/env';
 
 import ApiResponse from '../../../app/api.response';
-import Logger from '../../../app/api.logger';
 
 import errorTypes from '../../../app/types/errors';
 import User from '../../../models/user.model';
