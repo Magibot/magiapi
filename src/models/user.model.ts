@@ -17,24 +17,22 @@ const generateRandomNumber = () => {
 
 export interface IUser extends mongoose.Document {
   username: string;
-  temporaryPassword: any;
   password: any;
   createdAt: Date;
-  temporaryPasswordExpirationDate: Date;
-  isValid: boolean;
+  passwordExpirationDate: any;
+  isValidated: boolean;
   accessToken: any;
 
-  generateTemporaryPassword: () => void;
+  generateTemporaryPassword: () => number;
   hideSensibleData: () => void;
-  generateAccessToken: () => void;
+  generateAccessToken: () => string;
   resetAccessToken: () => void;
-  comparePassword: (
+  checkPassword: (
     password: string
   ) => { ok?: boolean; error?: { name: string; message: string } };
 }
 
 export interface IUserModel extends mongoose.Model<IUser> {
-  verifyTemporaryPassword: (user: IUser) => { isValid: boolean };
   verifyToken: (
     token: string
   ) => { user?: IUser; error?: { name: string; message: string } };
@@ -45,11 +43,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
-  },
-  temporaryPassword: {
-    type: String,
-    select: false,
-    default: generateRandomNumber
   },
   password: {
     type: String,
@@ -63,34 +56,17 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  temporaryPasswordExpirationDate: {
+  passwordExpirationDate: {
     type: Date,
     default: addDaysToDate(new Date(), env.daysToExpireTemporaryPassword)
   },
-  isValid: {
+  isValidated: {
     type: Boolean,
-    default: true
+    default: false
   }
 });
 
 // Statics methods
-UserSchema.statics.verifyTemporaryPassword = async function(user: IUser) {
-  if (!user.temporaryPassword) {
-    return { isValid: true };
-  }
-
-  const expirationDate = new Date(user.temporaryPasswordExpirationDate);
-  const now = new Date();
-  if (now > expirationDate) {
-    user.temporaryPassword = undefined;
-    user.isValid = false;
-    await user.save();
-    return { isValid: false };
-  }
-
-  return { isValid: true };
-};
-
 UserSchema.statics.verifyToken = async function(token: string) {
   try {
     if (!(await User.findOne({ accessToken: token }).select('+accessToken'))) {
@@ -142,13 +118,14 @@ UserSchema.statics.verifyToken = async function(token: string) {
 };
 
 // Object methods
-UserSchema.methods.generateTemporaryPassword = function() {
-  (this as IUser).temporaryPassword = generateRandomNumber();
+UserSchema.methods.generateTemporaryPassword = async function() {
+  const user = this as IUser;
+  user.password = generateRandomNumber();
+  return user.password;
 };
 
 UserSchema.methods.hideSensibleData = function() {
   (this as IUser).password = undefined;
-  (this as IUser).temporaryPassword = undefined;
   (this as IUser).accessToken = undefined;
 };
 
@@ -159,11 +136,11 @@ UserSchema.methods.generateAccessToken = async function() {
 
   // No need to generate a new access token
   if (user && user.id === id) {
-    return;
+    return user.accessToken;
   }
 
   (this as IUser).accessToken = generateJwt({ id });
-  await (this as IUser).save();
+  return (this as IUser).accessToken;
 };
 
 UserSchema.methods.resetAccessToken = async function() {
@@ -171,9 +148,31 @@ UserSchema.methods.resetAccessToken = async function() {
   await (this as IUser).save();
 };
 
-UserSchema.methods.comparePassword = async function(password: string) {
-  if (!(await bcrypt.compare(password, (this as IUser).password))) {
-    return { error: { name: 'BadPassword', message: 'Wrong password' } };
+UserSchema.methods.checkPassword = async function(password: string) {
+  const user = this as IUser;
+  const expirationDate = new Date(user.passwordExpirationDate);
+  const now = new Date();
+  if (!user.isValidated) {
+    if (now > expirationDate) {
+      user.password = undefined;
+      await user.save();
+      return {
+        error: {
+          name: 'PasswordExpired',
+          message: 'Temporary password expired. Please reset your password'
+        }
+      };
+    }
+
+    if (password !== user.password) {
+      return { error: { name: 'InvalidPassword', message: 'Wrong password' } };
+    }
+
+    return { ok: true };
+  }
+
+  if (!(await bcrypt.compare(password, user.password))) {
+    return { error: { name: 'InvalidPasswor', message: 'Wrong password' } };
   }
 
   return { ok: true };
@@ -181,16 +180,12 @@ UserSchema.methods.comparePassword = async function(password: string) {
 
 // Middlewares
 UserSchema.pre<IUser>('save', async function(next) {
-  const user = this;
-  if (user.isModified('password')) {
-    this.password = await bcrypt.hash(user.password, 10);
-  }
-
-  if (user.temporaryPassword && user.isModified('temporaryPassword')) {
-    user.temporaryPasswordExpirationDate = addDaysToDate(
-      new Date(),
-      env.daysToExpireTemporaryPassword
-    );
+  if (this.isModified('password')) {
+    if (!this.isValidated) {
+      this.passwordExpirationDate = addDaysToDate(new Date(), env.daysToExpireTemporaryPassword);
+    } else {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 
   next();

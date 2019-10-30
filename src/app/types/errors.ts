@@ -10,7 +10,8 @@ export const errors = {
   authentication: {
     password: {
       invalid: 'InvalidPassword',
-      expired: 'PasswordExpired'
+      expired: 'PasswordExpired',
+      confirmation: 'InvalidConfirmationPassword'
     },
     error: {
       token: 'TokenError',

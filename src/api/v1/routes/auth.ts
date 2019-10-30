@@ -42,15 +42,16 @@ router.post('/register', async (request, response) => {
       username: request.body.username
     });
 
-    user = await user.save();
     await user.generateAccessToken();
+    await user.generateTemporaryPassword();
+    user = await user.save();
 
-    const { accessToken, temporaryPassword, temporaryPasswordExpirationDate } = user;
+    const { accessToken, password, passwordExpirationDate } = user;
     apiResponse.setPayload({
       token: accessToken,
       tokenExpiresIn: env.tokenExpirationTime,
-      password: temporaryPassword,
-      expirationDate: temporaryPasswordExpirationDate,
+      password: password,
+      expirationDate: passwordExpirationDate,
     });
     return response.status(201).json(apiResponse.json());
   } catch (err) {
@@ -82,7 +83,7 @@ router.post('/authenticate', async (request, response) => {
     return response.status(400).json(apiResponse.json());
   }
 
-  const user = await User.findOne({ username }).select('+password +temporaryPassword +accessToken');
+  const user = await User.findOne({ username }).select('+password +accessToken');
   if (!user) {
     apiResponse.addError({
       type: errorTypes.entity.notfound,
@@ -92,46 +93,20 @@ router.post('/authenticate', async (request, response) => {
     return response.status(404).send(apiResponse.json());
   }
 
-  const { isValid } = await User.verifyTemporaryPassword(user);
-  if (isValid) {
-    if (user.temporaryPassword !== password) {
-      apiResponse.addError({
-        type: errorTypes.authentication.password.invalid,
-        message: 'Wrong password',
-        kind: 'authentication.password.invalid'
-      });
-
-      return response.status(400).send(apiResponse.json());
-    }
-
-    await user.generateAccessToken();
-    const { accessToken } = user;
-    user.hideSensibleData();
-    return response.status(201).json({ user, token: accessToken });
-  }
-
-  if (!user.password) {
+  const { error } = await user.checkPassword(password);
+  if (error) {
     apiResponse.addError({
-      type: errorTypes.authentication.password.expired,
-      message: 'Temporary password expired. Please create a new password for your account',
-      kind: 'authentication.password.expired'
+      type: error.name,
+      message: error.message,
+      kind: 'authentication.password'
     });
 
     return response.status(400).json(apiResponse.json());
   }
 
-  const { error } = await user.comparePassword(password);
-  if (error) {
-    apiResponse.addError({
-      type: errorTypes.authentication.password.invalid,
-      message: error.message,
-      kind: 'authentication.password.invalid'
-    });
-
-    return response.status(400).send(apiResponse.json());
-  }
-
   await user.generateAccessToken();
+  await user.save();
+  
   const { accessToken } = user;
   user.hideSensibleData();
   return response.status(201).json({ user, token: accessToken });
@@ -145,6 +120,38 @@ router.post('/logout', bearerAuthenticationInterceptor, async (request, response
   }
 
   return response.status(204).json();
+});
+
+router.post('/change-password', bearerAuthenticationInterceptor, async (request, response) => {
+  const { newPassword, confirmationPassword } = request.body;
+  const apiResponse = new ApiResponse();
+  if (newPassword !== confirmationPassword) {
+    apiResponse.addError({
+      type: errorTypes.authentication.password.confirmation,
+      message: 'Confirmation password does not match with the password provided',
+      kind: 'authentication.password.confirmation'
+    });
+    
+    return response.status(400).json(apiResponse.json());
+  }
+
+  const user = await User.findById(request.userId).select('+password');
+  if (!user) {
+    apiResponse.addError({
+      type: errorTypes.authentication.error.token,
+      message: 'Token provided reflects an user that don\'t exist',
+      kind: 'authentication.error.token'
+    });
+    
+    return response.status(400).json(apiResponse.json());
+  }
+
+  user.password = newPassword;
+  user.isValidated = true;
+  user.passwordExpirationDate = null;
+  await user.save();
+
+  return response.status(201).json();
 });
 
 export default router;
