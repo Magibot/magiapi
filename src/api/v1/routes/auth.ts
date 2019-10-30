@@ -37,7 +37,12 @@ router.post('/register', async (request, response) => {
       return response.status(400).json(apiResponse.json());
     }
 
-    const user = await User.create(request.body);
+    let user = new User({
+      username: request.body.username,
+      password: Math.floor(Math.random() * 10000) + 1000
+    });
+
+    user = await user.save();
     const token = generateJwt({ id: user.id });
     user.password = undefined;
     apiResponse.setPayload({ user, token });
