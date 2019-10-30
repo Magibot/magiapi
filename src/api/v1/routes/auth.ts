@@ -17,18 +17,28 @@ const router = express.Router({ mergeParams: true });
 router.post('/register', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
-    const { discord_id } = request.headers;
-    if (!discord_id) {
+    const { discordId, username } = request.body;
+    if (!discordId) {
       apiResponse.addError({
         type: errorTypes.validations.required,
-        message: 'Missing header `discord_id` for guild identification',
+        message: 'Field `discordId` is required for guild identification',
         kind: 'validations.required'
       });
 
       return response.status(400).json(apiResponse.json());
     }
 
-    const guild = await Guild.findOne({ discordId: discord_id });
+    if (!username) {
+      apiResponse.addError({
+        type: errorTypes.validations.required,
+        message: 'Field `username` is required for guild identification',
+        kind: 'validations.required'
+      });
+
+      return response.status(400).json(apiResponse.json());
+    }
+
+    const guild = await Guild.findOne({ discordId });
     if (!guild) {
       apiResponse.addError({
         type: errorTypes.validations.invalid.headers,
@@ -39,9 +49,34 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
       return response.status(400).json(apiResponse.json());
     }
 
-    let user = new User({
+    let user = await User.findOne({ username });
+    if (user) {
+
+      if (user.guilds.filter(guildId => guildId == guild.id).length > 0) {
+        apiResponse.addError({
+          type: errorTypes.database.duplicate,
+          message: `The user \`${username}\` is already registered in this guild`,
+          kind: 'database.duplicate'
+        });
+
+        return response.status(409).json(apiResponse.json());
+      }
+
+      user.guilds.push(guild.id);
+      apiResponse.setPayload({
+        user
+      });
+      await user.save();
+      user.hideSensibleData();
+
+      return response.status(201).json(apiResponse.json());
+    }
+
+    // First use of the bot
+    user = new User({
       username: request.body.username
     });
+    user.guilds.push(guild.id);
 
     await user.generateAccessToken();
     const password = await user.generateTemporaryPassword();

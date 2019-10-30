@@ -22,6 +22,7 @@ export interface IUser extends mongoose.Document {
   passwordExpirationDate: any;
   isValidated: boolean;
   accessToken: any;
+  guilds: Array<string>;
 
   generateTemporaryPassword: () => number;
   hideSensibleData: () => void;
@@ -60,6 +61,7 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: addDaysToDate(new Date(), env.daysToExpireTemporaryPassword)
   },
+  guilds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Guild' }],
   isValidated: {
     type: Boolean,
     default: false
