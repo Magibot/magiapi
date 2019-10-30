@@ -4,6 +4,7 @@ import express from 'express';
 import Guild from '../../../models/guild.model';
 
 // Middlewares
+import authMiddleware from '../middleware/auth.middleware';
 import clientIdentificationInterceptor from '../middleware/client.identification.interceptor';
 
 // Helpers
@@ -38,7 +39,7 @@ router.post('/', clientIdentificationInterceptor, async (request, response) => {
   }
 });
 
-router.get('/:guildId', async (request, response) => {
+router.get('/:guildId', authMiddleware, async (request, response) => {
   const apiResponse = new ApiResponse();
   const { guildId } = request.params;
   try {
@@ -116,11 +117,6 @@ router.delete('/:guildId', clientIdentificationInterceptor, async (request, resp
     return response.status(statusCode).json(jsonResponse);
   }
 });
-
-// router.use('/:guildId/playlists', async (request, response, next) => {
-//   request.guildId = request.params.guildId;
-//   next();
-// });
 
 router.use('/:guildId/playlists', playlistRouter);
 
