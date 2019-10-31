@@ -32,6 +32,9 @@ export namespace Magi.API.Application.Logger {
         case 'PUT':
           method = chalk.hex('#22538f').bold('PUT');
           break;
+        case 'PATCH':
+          method = chalk.hex('#ad9758').bold('PATCH');
+          break;
         case 'DELETE':
           method = chalk.hex('#c94218').bold('DELETE');
           break;
