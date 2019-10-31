@@ -10,6 +10,7 @@ export interface IGuild extends mongoose.Document {
   name: string;
   discordId: string;
   region: string;
+  customPrefix: string;
   discordOwnerId: string;
   playlists: Array<string>;
   iconHash: string;
@@ -30,6 +31,11 @@ export const GuildSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  customPrefix: {
+    type: String,
+    trim: true,
+    maxlength: 1
   },
   region: {
     type: String

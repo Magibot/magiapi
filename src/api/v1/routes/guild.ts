@@ -26,6 +26,7 @@ router.post('/', clientIdentificationInterceptor, async (request, response) => {
       name: request.body.name,
       discordId: request.body.discordId,
       region: request.body.region,
+      customPrefix: request.body.customPrefix,
       discordOwnerId: request.body.discordOwnerId,
       iconHash: request.body.iconHash
     });
@@ -90,6 +91,7 @@ router.put('/:guildId', clientIdentificationInterceptor, async (request, respons
     guild.name = request.body.name;
     guild.discordId = request.body.discordId;
     guild.region = request.body.region;
+    guild.customPrefix = request.body.customPrefix;
     guild.discordOwnerId = request.body.discordOwnerId;
     guild.iconHash = request.body.iconHash;
 
