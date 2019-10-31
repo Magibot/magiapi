@@ -105,7 +105,7 @@ router.put('/:guildId', clientIdentificationInterceptor, async (request, respons
   }
 });
 
-router.patch('/:guildId', async (request, response) => {
+router.patch('/:guildId', authMiddleware, async (request, response) => {
   const { guildId } = request.params;
   const apiResponse = new ApiResponse();
   try {
