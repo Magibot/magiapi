@@ -19,13 +19,13 @@ import playlistRouter from './guild.resources/playlist';
 
 const router = express.Router({ mergeParams: true });
 
-router.use('/:id',async (request, response, next) => {
-  if (!request.params.id) {
+router.use('/:guildId',async (request, response, next) => {
+  if (!request.params.guilId) {
     next();
   }
   
   const apiResponse = new ApiResponse();
-  const id = request.params.id;
+  const guilId = request.params.guilId;
   let { typeId } = request.query;
   if (!typeId) {
     typeId = 'objectId';
@@ -34,9 +34,9 @@ router.use('/:id',async (request, response, next) => {
   try {
     let guild;
     if (typeId === 'objectId') {
-      guild = await Guild.findById(id);
+      guild = await Guild.findById(guilId);
     } else if (typeId === 'discordId') {
-      guild = await Guild.findOne({ discordId: id });
+      guild = await Guild.findOne({ discordId: guilId });
     } else {
       apiResponse.addError({
         type: errorTypes.validations.invalid.query,
@@ -45,6 +45,11 @@ router.use('/:id',async (request, response, next) => {
       });
   
       return response.status(400).json(apiResponse.json());
+    }
+
+    const { _populate } = request.query;
+    if (guild && _populate && _populate === 'playlists') {
+      guild = guild.populate('playlists', 'name creator allowModify createdAt songs');
     }
 
     request.guild = guild;
