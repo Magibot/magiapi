@@ -19,6 +19,42 @@ import playlistRouter from './guild.resources/playlist';
 
 const router = express.Router({ mergeParams: true });
 
+router.use('/:id',async (request, response, next) => {
+  if (!request.params.id) {
+    next();
+  }
+  
+  const apiResponse = new ApiResponse();
+  const id = request.params.id;
+  let { typeId } = request.query;
+  if (!typeId) {
+    typeId = 'objectId';
+  }
+
+  try {
+    let guild;
+    if (typeId === 'objectId') {
+      guild = await Guild.findById(id);
+    } else if (typeId === 'discordId') {
+      guild = await Guild.findOne({ discordId: id });
+    } else {
+      apiResponse.addError({
+        type: errorTypes.validations.invalid.query,
+        message: `Query parameter \`typeId\` is invalid. It should be equals to \`objectId\` or \`discordId\``,
+        kind: 'validations.invalid.query'
+      });
+  
+      return response.status(400).json(apiResponse.json());
+    }
+
+    request.guild = guild;
+    next();
+  } catch (err) {
+    const { statusCode, jsonResponse } = exceptionHandler(err);
+    return response.status(statusCode).json(jsonResponse);
+  }
+});
+
 router.post('/', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
   try {
@@ -132,27 +168,8 @@ router.patch('/:guildId', authMiddleware, async (request, response) => {
 
 router.delete('/:id', clientIdentificationInterceptor, async (request, response) => {
   const apiResponse = new ApiResponse();
-  const { id } = request.params;
-  let { typeId } = request.query;
-  if (!typeId) {
-    typeId = 'objectId';
-  }
-
   try {
-    let guild;
-    if (typeId === 'objectId') {
-      guild = await Guild.findById(id);
-    } else if (typeId === 'discordId') {
-      guild = await Guild.findOne({ discordId: id });
-    } else {
-      apiResponse.addError({
-        type: errorTypes.validations.invalid.query,
-        message: `Query parameter \`typeId\` is invalid. It should be equals to \`objectId\` or \`discordId\``,
-        kind: 'validations.invalid.query'
-      });
-  
-      return response.status(400).json(apiResponse.json());
-    }
+    const { guild } = request;
   
     if (guild) {
       await guild.remove();

@@ -7,6 +7,7 @@ import env from './env';
 import api from '../api';
 
 import Logger from "../app/api.logger";
+import { IGuild } from '../models/guild.model';
 
 /**
  * Extending the express.Request object
@@ -19,6 +20,7 @@ declare global {
       userId: string;
       guildId: string;
       playlistId: string;
+      guild: IGuild | null | undefined;
     }
   }
 }
