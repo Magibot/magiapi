@@ -130,15 +130,35 @@ router.patch('/:guildId', authMiddleware, async (request, response) => {
   }
 });
 
-router.delete('/:guildId', clientIdentificationInterceptor, async (request, response) => {
-  const { guildId } = request.params;
+router.delete('/:id', clientIdentificationInterceptor, async (request, response) => {
+  const apiResponse = new ApiResponse();
+  const { id } = request.params;
+  let { typeId } = request.query;
+  if (!typeId) {
+    typeId = 'objectId';
+  }
+
   try {
-    const guild = await Guild.findById(guildId);
+    let guild;
+    if (typeId === 'objectId') {
+      guild = await Guild.findById(id);
+    } else if (typeId === 'discordId') {
+      guild = await Guild.findOne({ discordId: id });
+    } else {
+      apiResponse.addError({
+        type: errorTypes.validations.invalid.query,
+        message: `Query parameter \`typeId\` is invalid. It should be equals to \`objectId\` or \`discordId\``,
+        kind: 'validations.invalid.query'
+      });
+  
+      return response.status(400).json(apiResponse.json());
+    }
+  
     if (guild) {
       await guild.remove();
     }
-
-    return response.status(204).json();
+  
+    return response.status(204).json(apiResponse.json());
   } catch (err) {
     const { statusCode, jsonResponse } = exceptionHandler(err);
     return response.status(statusCode).json(jsonResponse);
