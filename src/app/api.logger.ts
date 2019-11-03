@@ -36,6 +36,7 @@ export namespace Magi.API.Application.Logger {
     static error = (str: string) => {
       if (NODE_ENV === 'production') {
         winstonLogger.log('error', str, { timestamp: new Date().toISOString() });
+        return;
       }
 
       console.log(chalk.bold.red(str));
@@ -44,6 +45,7 @@ export namespace Magi.API.Application.Logger {
     static warning = (str: string) => {
       if (NODE_ENV === 'production') {
         winstonLogger.log('warn', str, { timestamp: new Date().toISOString() });
+        return;
       }
 
       console.log(chalk.bold.yellow(str));
@@ -52,6 +54,7 @@ export namespace Magi.API.Application.Logger {
     static normal = (str: string) => {
       if (NODE_ENV === 'production') {
         winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
+        return;
       }
 
       console.log(chalk.magenta(str));
