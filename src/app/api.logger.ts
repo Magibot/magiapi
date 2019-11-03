@@ -3,8 +3,6 @@ import morgan from 'morgan';
 import winston from 'winston';
 import appRoot from 'app-root-path';
 
-const { NODE_ENV } = process.env;
-
 const winstonLogger = winston.createLogger({
   transports: [
     new winston.transports.Console({
@@ -25,7 +23,7 @@ const winstonLogger = winston.createLogger({
 export namespace Magi.API.Application.Logger {
   export abstract class ApiConsole {
     static success = (str: string) => {
-      if (NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
         return;
       }
@@ -34,7 +32,7 @@ export namespace Magi.API.Application.Logger {
     };
 
     static error = (str: string) => {
-      if (NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         winstonLogger.log('error', str, { timestamp: new Date().toISOString() });
         return;
       }
@@ -43,7 +41,7 @@ export namespace Magi.API.Application.Logger {
     };
 
     static warning = (str: string) => {
-      if (NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         winstonLogger.log('warn', str, { timestamp: new Date().toISOString() });
         return;
       }
@@ -52,7 +50,7 @@ export namespace Magi.API.Application.Logger {
     };
 
     static normal = (str: string) => {
-      if (NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
         return;
       }
@@ -70,7 +68,7 @@ export namespace Magi.API.Application.Logger {
       const referrer = 'from ' + tokens.referrer(req, res);
       const userAgent = tokens['user-agent'](req, res);
 
-      if (NODE_ENV === 'production') {
+      if (process.env.NODE_ENV === 'production') {
         const str = `API REQUEST INFO: ${method} ${statusCode} ${endpoint} ${responseTime} ${referrer}`;
         winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
         return;
