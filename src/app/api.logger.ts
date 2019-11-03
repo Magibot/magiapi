@@ -1,27 +1,78 @@
 import chalk from 'chalk';
 import morgan from 'morgan';
+import winston from 'winston';
+import appRoot from 'app-root-path';
+
+const { NODE_ENV } = process.env;
+
+const winstonLogger = winston.createLogger({
+  transports: [
+    new winston.transports.Console({
+      level: 'debug',
+      handleExceptions: true
+    }),
+    new winston.transports.File({
+      level: 'info',
+      filename: `${appRoot}/logs/app.log`,
+      handleExceptions: true,
+      maxsize: 5242880,
+      maxFiles: 5
+    })
+  ],
+  exitOnError: false
+});
 
 export namespace Magi.API.Application.Logger {
   export abstract class ApiConsole {
     static success = (str: string) => {
+      if (NODE_ENV === 'production') {
+        winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
+        return;
+      }
+
       console.log(chalk.bold.green(str));
     };
 
     static error = (str: string) => {
+      if (NODE_ENV === 'production') {
+        winstonLogger.log('error', str, { timestamp: new Date().toISOString() });
+      }
+
       console.log(chalk.bold.red(str));
     };
 
     static warning = (str: string) => {
+      if (NODE_ENV === 'production') {
+        winstonLogger.log('warn', str, { timestamp: new Date().toISOString() });
+      }
+
       console.log(chalk.bold.yellow(str));
     };
 
     static normal = (str: string) => {
+      if (NODE_ENV === 'production') {
+        winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
+      }
+
       console.log(chalk.magenta(str));
     };
 
     static morganInterceptor = morgan(function(tokens, req, res) {
+      let method = tokens.method(req, res);
+      const statusCode = tokens.status(req, res);
+      const endpoint = tokens.url(req, res);
+      const responseTime = tokens['response-time'](req, res) + ' ms';
 
-      let method;
+      const remoteAddress = tokens['remote-addr'](req, res);
+      const referrer = 'from ' + tokens.referrer(req, res);
+      const userAgent = tokens['user-agent'](req, res);
+
+      if (NODE_ENV === 'production') {
+        const str = `API REQUEST INFO: ${method} ${statusCode} ${endpoint} ${responseTime} ${referrer}`;
+        winstonLogger.log('info', str, { timestamp: new Date().toISOString() });
+        return;
+      }
+
       switch (tokens.method(req, res)) {
         case 'GET':
           method = chalk.hex('#0b6608').bold('GET');
@@ -43,13 +94,13 @@ export namespace Magi.API.Application.Logger {
       return [
         chalk.bold.cyanBright('\nAPI Request Info:'),
         method,
-        chalk.greenBright(tokens.status(req, res)),
-        chalk.hex('#ff5252')(tokens.url(req, res)),
-        chalk.hex('#2ed573').bold(tokens['response-time'](req, res) + ' ms'),
+        chalk.greenBright(statusCode),
+        chalk.hex('#ff5252')(endpoint),
+        chalk.hex('#2ed573').bold(responseTime),
         chalk.hex('#f78fb3').bold('@ ' + tokens.date(req, res)),
-        chalk.yellow(tokens['remote-addr'](req, res)),
-        chalk.hex('#fffa65').bold('from ' + tokens.referrer(req, res)),
-        chalk.hex('#1e90ff')(tokens['user-agent'](req, res)),
+        chalk.yellow(remoteAddress),
+        chalk.hex('#fffa65').bold(referrer),
+        chalk.hex('#1e90ff')(userAgent)
       ].join(' ');
     });
   }
