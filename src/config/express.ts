@@ -2,12 +2,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import cors from 'cors';
+import compression from 'compression';
+import helmet from 'helmet';
 
 import env from './env';
 
 import auth from '../api/v1/auth';
 import guild from '../api/v1/guild';
-import Logger from "../app/api.logger";
+import Logger from '../app/api.logger';
 
 /**
  * Extending the express.Request object
@@ -32,6 +34,9 @@ export const createExpressApplication = function() {
 
   // Middlewares
   app.use(Logger.ApiConsole.morganInterceptor);
+
+  app.use(compression());
+  app.use(helmet());
   app.use(cors());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
