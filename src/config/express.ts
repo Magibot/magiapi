@@ -1,12 +1,18 @@
+import env from './env';
 import express from 'express';
+
+// Express middlewares
 import bodyParser from 'body-parser';
 import methodOverride from 'method-override';
 import cors from 'cors';
+import compression from 'compression';
+import helmet from 'helmet';
+import Logger from '../app/api.logger';
 
-import env from './env';
+// Routes
 import api from '../api';
 
-import Logger from "../app/api.logger";
+// Models
 import { IGuild } from '../models/guild.model';
 
 /**
@@ -31,9 +37,12 @@ export const createExpressApplication = function() {
   // Enviroment setup
   app.set('port', env.port);
   app.set('tokenExpirationTime', env.tokenExpirationTime);
-  
+
   // Middlewares
   app.use(Logger.ApiConsole.morganInterceptor);
+
+  app.use(compression());
+  app.use(helmet());
   app.use(cors());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
