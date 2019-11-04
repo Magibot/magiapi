@@ -9,6 +9,9 @@ import compression from 'compression';
 import helmet from 'helmet';
 import Logger from '../app/api.logger';
 
+import ApiResponse from '../app/api.response';
+import errorTypes from '../app/types/errors';
+
 // Routes
 import api from '../api';
 
@@ -50,6 +53,17 @@ export const createExpressApplication = function() {
 
   // Routes
   app.use('/api', api);
+
+  // Handle route not found
+  app.use((request, response, next) => {
+    const apiResponse = new ApiResponse();
+    apiResponse.addError({
+      type: errorTypes.internal.notimplemented,
+      message: 'Operation is not implemented',
+      kind: 'internal.notimplemented'
+    });
+    return response.status(501).json(apiResponse.json());
+  });
 
   return app;
 };

@@ -26,7 +26,8 @@ export const errors = {
     duplicate: 'ConflictError'
   },
   internal: {
-    error: 'InternalError'
+    error: 'InternalError',
+    notimplemented: 'OperationNotImplemented'
   }
 };
 
