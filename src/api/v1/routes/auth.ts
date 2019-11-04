@@ -191,7 +191,7 @@ router.post(
         kind: 'authentication.error.token'
       });
 
-      return response.status(400).json(apiResponse.json());
+      return response.status(404).json(apiResponse.json());
     }
 
     user.password = newPassword;
@@ -199,13 +199,22 @@ router.post(
     user.passwordExpirationDate = null;
     await user.save();
 
-    return response.status(201).json();
+    return response.status(204).json();
   }
 );
 
 router.post('/reset-password', clientIdentificationInterceptor, async (request, response) => {
   const { username } = request.body;
   const apiResponse = new ApiResponse();
+  if (!username) {
+    apiResponse.addError({
+      type: errorTypes.validations.required,
+      message: 'Field `username` is required',
+      kind: 'validations.required'
+    });
+
+    return response.status(400).json(apiResponse.json());
+  }
   const user = await User.findOne({ username }).select(
     '+password +expiredPassword'
   );
