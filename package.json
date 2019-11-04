@@ -15,7 +15,8 @@
     "dev": "nodemon",
     "test": "mocha test/test.js",
     "start": "node ./_build/index.js",
-    "postinstall": "npm run build"
+    "preinstall": "npm install -g yarn && yarn global add typescript",
+    "postinstall": "yarn build"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
@@ -33,8 +34,7 @@
     "morgan": "^1.9.1",
     "swagger-ui-express": "^4.1.2",
     "validator": "^12.0.0",
-    "winston": "^3.2.1",
-    "typescript": "^3.6.3"
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
@@ -53,7 +53,8 @@
     "@types/validator": "^10.11.3",
     "nodemon": "^1.19.4",
     "ts-node": "^8.4.1",
-    "tslint": "^5.20.0"
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
   },
   "nodemonConfig": {
     "watch": [
