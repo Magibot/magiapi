@@ -311,16 +311,21 @@ components:
           description: Unique user identification.
     resetPasswordResponse:
       type: object
-      required: 
-      - password
-      - expirationDate
+      required:
+      - payload
       properties:
-        password:
-          type: string
-          description: Temporary password generated.
-        expiration:
-          type: string
-          description: Date when the password will expire.
+        payload:
+          type: object
+          required:
+          - password
+          - expirationDate
+          properties:
+            password:
+              type: string
+              description: Temporary password generated.
+            expiration:
+              type: string
+              description: Date when the password will expire.
     errorResponse:
       type: object
       properties:
