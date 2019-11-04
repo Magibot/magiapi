@@ -14,7 +14,8 @@
     "build": "tsc",
     "dev": "nodemon",
     "test": "mocha test/test.js",
-    "start": "node ./_build/index.js"
+    "start": "node ./_build/index.js",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
