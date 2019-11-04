@@ -41,9 +41,9 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
     const guild = await Guild.findOne({ discordId });
     if (!guild) {
       apiResponse.addError({
-        type: errorTypes.validations.invalid.headers,
-        message: 'This discord guild does not exist',
-        kind: 'validations.invalid.headers'
+        type: errorTypes.entity.notfound,
+        message: `Discord guild with discordId \`${discordId}\` does not exist`,
+        kind: 'entity.notfound'
       });
 
       return response.status(400).json(apiResponse.json());
@@ -63,13 +63,13 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
       }
 
       user.guilds.push(guild.id);
+      await user.save();
+      user.hideSensibleData();
       apiResponse.setPayload({
         user
       });
-      await user.save();
-      user.hideSensibleData();
 
-      return response.status(201).json(apiResponse.json());
+      return response.status(200).json(apiResponse.json());
     }
 
     // First use of the bot
