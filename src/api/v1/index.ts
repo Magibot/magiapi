@@ -7,7 +7,7 @@ import guild from './routes/guild';
 const router = express.Router({ mergeParams: true });
 
 // Require the swagger document
-const document = require('./swagger.json');
+import document from './swagger.json';
 router.use('/docs', swagger.serve, swagger.setup(document, { customCss: '.swagger-ui .topbar { display: none }' }));
 
 router.use('/auth', auth);
