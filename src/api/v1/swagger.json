@@ -1,9 +1,14 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Magi REST API",
-    "description": "HotelApp REST API Specification - Where you can integrate with web and digital solutions.",
-    "version": "1.0.0"
+    "title": "Magi REST API Documentation",
+    "description": "The coolest Discord Bot REST API that you can find. Here you can connect your app to Magi's Platform",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Matheus Mello de Lima",
+      "email": "mellomatheuslima@gmail.com",
+      "url": "https://mellomaths.github.io/"
+    }
   },
   "servers": [
     {
