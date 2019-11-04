@@ -12,12 +12,19 @@ paths:
       tags: 
         - Authentication
       summary: Register and authenticate a new user.
-      description: Save the user information on database and automatically authenticate, giving a session of 1 hour. This route is protect by client identification, only espefic clients can do the operation.
+      description: Save the user information on database and automatically authenticate, giving a session of 1 hour.
       parameters:
         - in: header
           name: Authorization
-          description: Client ID of the APP registered within Magi's platform. 
+          description: Client ID of the APP registered within Magi's platform. This route is protect by client identification, only espefic apps can do the operation.
           required: true
+          schema:
+            type: string
+          example: uuid
+        - in: header
+          name: authorization_type
+          description: Type of authorization the user has. In this case, it's 'client_id'
+          example: 'client_id'
           schema:
             type: string
       requestBody:
@@ -62,14 +69,14 @@ paths:
     post:
       tags: 
         - Authentication
-      summary: Register and authenticate a new user
-      description: Save the user information on database and automatically authenticate, giving a session of 1 hour.
+      summary: Login with a registered user.
+      description: Authenticate a user, giving a session of 1 hour.
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/userRegistration'
-        description: User to be registered in Magi's platform
+              $ref: '#/components/schemas/loginRequest'
+        description: Username and password to login.
         required: true
       responses:
         '201':
@@ -78,6 +85,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/userRegistrationResponse'
+        '400':
+          description: Bad request. Something is missing or wrong in the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: Not found. Username provided does not exist in the platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /auth/logout:
+    post:
+      tags: 
+        - Authentication
+      summary: Logout the user from the system.
+      description: If the user is logged in, this operation will detroy the user access token.
+      parameters:
+        - in: header
+          name: Authorization
+          description: User access token returned from the 'authenticate' operation
+          required: true
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+        - in: header
+          name: authorization_type
+          description: Type of authorization the user has. In this case, it's 'access_token'
+          example: 'access_token'
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content. User logged out successfully.
+        '401':
+          description: Unauthorized. Access token provided is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /auth/change-password:
+    post:
+      tags: 
+        - Authentication
+      summary: Change the user's password.
+      parameters:
+        - in: header
+          name: Authorization
+          description: User access token returned from the 'authenticate' operation
+          required: true
+          schema:
+            type: string
+          example: Bearer {{access_token}}
+        - in: header
+          name: authorization_type
+          description: Type of authorization the user has. In this case, it's 'access_token'
+          example: 'access_token'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/changePasswordRequest'
+        required: true
+      responses:
+        '204':
+          description: No content. Password successfuly changed. 
+        '400':
+          description: Bad request. The new password and it's confirmation do not match.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '401':
+          description: Unauthorized. Access token provided is invalid.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: Not found. The user logged in with the token provided does not exist in database. If this ever happen, you should contact the Magi's platform administrator.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /auth/reset-password:
+    post:
+      tags: 
+        - Authentication
+      summary: Reset the user's password.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Client ID of the APP registered within Magi's platform. This route is protect by client identification, only espefic apps can do the operation.
+          required: true
+          schema:
+            type: string
+          example: uuid
+        - in: header
+          name: authorization_type
+          description: Type of authorization the user has. In this case, it's 'client_id'
+          example: 'client_id'
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordRequest'
+        required: true
+      responses:
+        '201':
+          description: Created. Successfully reset the password and temporary password was generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resetPasswordResponse'
+        '400':
+          description: Bad request. Something is missing or wrong in the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '401':
+          description: Unauthorized. Client ID invalid or not provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: Not found. The username provided does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
 components:
   schemas:
     userRegistration:
@@ -133,6 +277,50 @@ components:
                 createdAt:
                   type: string
                   description: Date when the user was registered.
+    loginRequest:
+      type: object
+      required: 
+      - username
+      - password
+      properties:
+        username:
+          type: string
+          description: Unique user identification.
+        password:
+          type: string
+          description: Secret user password.
+    changePasswordRequest:
+      type: object
+      required: 
+      - newPassword
+      - confirmationPassword
+      properties:
+        newPassword:
+          type: string
+          description: New password of the user.
+        confirmationPassword:
+          type: string
+          description: It's confirmation to check type errors.
+    resetPasswordRequest:
+      type: object
+      required: 
+      - username
+      properties:
+        username:
+          type: string
+          description: Unique user identification.
+    resetPasswordResponse:
+      type: object
+      required: 
+      - password
+      - expirationDate
+      properties:
+        password:
+          type: string
+          description: Temporary password generated.
+        expiration:
+          type: string
+          description: Date when the password will expire.
     errorResponse:
       type: object
       properties:
@@ -152,4 +340,4 @@ components:
         kind:
           type: string
           description: Path for the error generated.
-          
+            
