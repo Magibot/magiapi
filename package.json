@@ -15,8 +15,7 @@
     "dev": "nodemon",
     "test": "mocha test/test.js",
     "start": "node ./_build/index.js",
-    "preinstall": "npm install -g yarn && yarn global add typescript",
-    "postinstall": "yarn build"
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
