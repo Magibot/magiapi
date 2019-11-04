@@ -8,7 +8,17 @@ const router = express.Router({ mergeParams: true });
 
 // Require the swagger document
 import document from './swagger.json';
-router.use('/docs', swagger.serve, swagger.setup(document, { customCss: '.swagger-ui .topbar { display: none }' }));
+
+const { title, version } = document.info;
+const docsPageTitle = `${title} v${version}`;
+router.use(
+  '/docs',
+  swagger.serve,
+  swagger.setup(document, {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: docsPageTitle
+  })
+);
 
 router.use('/auth', auth);
 router.use('/guilds', guild);
