@@ -1,0 +1,155 @@
+openapi: 3.0.0
+info:
+  title: Magi REST API
+  description: HotelApp REST API Specification - Where you can integrate with web and digital solutions.
+  version: 1.0.0
+servers:
+  - url: 'https://magi-api.herokuapp.com/api/v1'
+    description: Production
+paths:
+  /auth/register:
+    post:
+      tags: 
+        - Authentication
+      summary: Register and authenticate a new user.
+      description: Save the user information on database and automatically authenticate, giving a session of 1 hour. This route is protect by client identification, only espefic clients can do the operation.
+      parameters:
+        - in: header
+          name: Authorization
+          description: Client ID of the APP registered within Magi's platform. 
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userRegistration'
+        description: User to be registered in Magi's platform.
+        required: true
+      responses:
+        '200':
+          description: Success. The user is already registered, but in a new Discord guild.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userPayloadResponse'
+        '201':
+          description: Created. User is created and authenticated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userRegistrationResponse'
+        '400':
+          description: Bad request. Error on validate data received.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '401':
+          description: Unauthorized. Client ID invalid or not provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '409':
+          description: Conflict. Happens when the user is already registered for the guild (discordId) provided.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /auth/authenticate:
+    post:
+      tags: 
+        - Authentication
+      summary: Register and authenticate a new user
+      description: Save the user information on database and automatically authenticate, giving a session of 1 hour.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/userRegistration'
+        description: User to be registered in Magi's platform
+        required: true
+      responses:
+        '201':
+          description: Created. User is created and authenticated 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/userRegistrationResponse'
+components:
+  schemas:
+    userRegistration:
+      type: object
+      required: 
+      - username
+      - discordId
+      properties:
+        username:
+          type: string
+          description: Unique user identification.
+        discordId:
+          type: string
+          description: ID that Discord uses to identify guilds. (It's not the guildId).
+    userRegistrationResponse:
+      type: object
+      properties:
+        payload: 
+          type: object
+          properties:
+            token:
+              type: string
+              description: Temporary access token for user authentication. With that token the user can access others routes.
+            tokenExpiresIn:
+              type: integer
+              description: Token expiration time in seconds.
+            password:
+              type: string
+              description: Temporary password randomly generated to user's login.
+            expirationDate:
+              type: string
+              description: Date when the password will expire.
+    userPayloadResponse: 
+      type: object
+      properties:
+        payload: 
+          type: object
+          properties:
+            user:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Unique user identification.
+                guilds:
+                  type: array
+                  description: All guilds the user is registered in.
+                  items:
+                    type: string
+                isValidated:
+                  type: boolean
+                  description: Tells if the user is validated or not after registered.
+                createdAt:
+                  type: string
+                  description: Date when the user was registered.
+    errorResponse:
+      type: object
+      properties:
+        errors: 
+          type: array
+          items:
+            $ref: '#/components/schemas/_errorMessageItem'
+    _errorMessageItem:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Type of the error generated by the API.
+        message:
+          type: string
+          description: Detailed information about what happened.
+        kind:
+          type: string
+          description: Path for the error generated.
+          
