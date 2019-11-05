@@ -178,7 +178,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{access_token}}"
+            "example": "Bearer {access_token}"
           },
           {
             "in": "header",
@@ -222,7 +222,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "Bearer {{access_token}}"
+            "example": "Bearer {access_token}"
           },
           {
             "in": "header",
@@ -351,6 +351,462 @@
           },
           "404": {
             "description": "Not found. The username provided does not exist.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guilds": {
+      "post": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Create a new guild.",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Client ID of the APP registered within Magi's platform. This route is protect by client identification, only espefic apps can do the operation.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. In this case, it's 'client_id'",
+            "example": "client_id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/guildCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created. Guild registered successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/guildResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict. Something on the request is conflicting with a registered guild.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guilds/{id}": {
+      "get": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Return data from the guild by it's ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_populate",
+            "description": "Will join the guild object with the child object passed. So if you send 'playlist', the operation will bring all playlist fields for all playlists registered for this guild ID.",
+            "example": "playlists",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. Guild was found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/guildResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Guild with ID was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Update all field of a guild.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Client ID of the APP registered within Magi's platform. This route is protect by client identification, only espefic apps can do the operation.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. In this case, it's 'client_id'",
+            "example": "client_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/guildCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success. Guild updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/guildResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Guild with ID was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Update only the fields passed.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/guildCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success. Guild updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/guildResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Guild with ID was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Guild"
+        ],
+        "summary": "Delete a new guild.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "Client ID of the APP registered within Magi's platform. This route is protect by client identification, only espefic apps can do the operation.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. In this case, it's 'client_id'",
+            "example": "client_id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted. Guild deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/guildResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID invalid or not provided.",
             "content": {
               "application/json": {
                 "schema": {
@@ -510,6 +966,97 @@
                 "description": "Date when the password will expire."
               }
             }
+          }
+        }
+      },
+      "guildCreateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "discordId",
+          "discordOwnerId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the guild."
+          },
+          "discordId": {
+            "type": "string",
+            "description": "The identification which Discord uses for the Guild."
+          },
+          "customPrefix": {
+            "type": "string",
+            "description": "Bot message prefix set by the user."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region where the Discord guild is located."
+          },
+          "discordOwnerId": {
+            "type": "string",
+            "description": "ID of the guild owner."
+          },
+          "iconHash": {
+            "type": "string",
+            "description": "Hash of the image used as icon for the guild."
+          }
+        }
+      },
+      "guildResponse": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "guild": {
+                "$ref": "#/components/schemas/GuildObject"
+              }
+            }
+          }
+        }
+      },
+      "GuildObject": {
+        "type": "object",
+        "required": [
+          "name",
+          "discordId",
+          "discordOwnerId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the guild."
+          },
+          "discordId": {
+            "type": "string",
+            "description": "The identification which Discord uses for the Guild."
+          },
+          "customPrefix": {
+            "type": "string",
+            "description": "Bot message prefix set by the user."
+          },
+          "region": {
+            "type": "string",
+            "description": "Region where the Discord guild is located."
+          },
+          "discordOwnerId": {
+            "type": "string",
+            "description": "ID of the guild owner."
+          },
+          "iconHash": {
+            "type": "string",
+            "description": "Hash of the image used as icon for the guild."
+          },
+          "playlists": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Date when the guild was created."
           }
         }
       },
