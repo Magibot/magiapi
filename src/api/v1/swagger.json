@@ -5,7 +5,7 @@
     "description": "The coolest Discord Bot REST API that you can find. Here you can connect your app to Magi's Platform",
     "version": "1.0.0",
     "contact": {
-      "name": "Matheus Mello de Lima",
+      "name": "Matheus Mello",
       "email": "mellomatheuslima@gmail.com",
       "url": "https://mellomaths.github.io/"
     }
@@ -110,7 +110,7 @@
         }
       }
     },
-    "/auth/authenticate": {
+    "/auth/login": {
       "post": {
         "tags": [
           "Authentication"
@@ -743,7 +743,7 @@
         "tags": [
           "Guild"
         ],
-        "summary": "Delete a new guild.",
+        "summary": "Delete a registered guild.",
         "parameters": [
           {
             "in": "path",
@@ -786,7 +786,7 @@
         ],
         "responses": {
           "204": {
-            "description": "Deleted. Guild deleted successfully.",
+            "description": "No content. Guild deleted successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -807,6 +807,512 @@
           },
           "401": {
             "description": "Unauthorized. Client ID invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/guilds/{guildId}/playlists": {
+      "post": {
+        "tags": [
+          "Playlist as Guild Resource"
+        ],
+        "summary": "Create a new playlist for the guild.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "guildId",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/playlistCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created. Playlist created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/playlistResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Guild with ID was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict. Unique key being violated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Playlist as Guild Resource"
+        ],
+        "summary": "Return all playlists registered for the guild.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "guildId",
+            "description": "ID of guild object registered in database, or the ID Discord API uses to differ the guilds.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typeId",
+            "description": "Type of the ID sent. It can be 'objectId' (ID of the object in the database) or 'discordId' (ID of the Guild for the Discord API). If not sent, the default is 'objectId'.",
+            "example": "objectId, discordId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_populate",
+            "description": "Will join the playlist object with the child object passed. So if you send 'songs', the operation will bring all songs fields for all song registered for the playlist.",
+            "example": "songs",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_offset",
+            "description": "The index of the first element returned list.",
+            "example": 20,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_limit",
+            "description": "The size of the list.",
+            "example": 10,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. All playlists returned successfully. If there's no playlist registered, this operation will return an empty array.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/playlistArrayResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Guild with ID was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/playlists/{id}": {
+      "get": {
+        "tags": [
+          "Playlist"
+        ],
+        "summary": "Return the playlist by it's ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of playlist object registered in database.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_populate",
+            "description": "Will join the playlist object with the child object passed. So if you send 'songs', the operation will bring all songs fields for all song registered for the playlist.",
+            "example": "songs",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. Playlist object returned successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/playlistResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Resource with ID sent was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Playlist"
+        ],
+        "summary": "Update the playlist by it's ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of playlist object registered in database.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_populate",
+            "description": "Will join the playlist object with the child object passed. So if you send 'songs', the operation will bring all songs fields for all song registered for the playlist.",
+            "example": "songs",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/playlistCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created. Playlist created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/playlistResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. Resource with ID sent was not found in database.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict. Unique key being violated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Playlist"
+        ],
+        "summary": "Delete the registered playlist by it's ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "ID of playlist object registered in database.",
+            "example": "uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "This route can be accessed either by a authenticated user or by a registered APP. So you send the client ID of the APP registered within Magi's platform or the user Access Token granted after authentication flow",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "uuid, Bearer {access_token}"
+          },
+          {
+            "in": "header",
+            "name": "authorization_type",
+            "description": "Type of authorization the user has. It can be 'access_token' for a authenticated user or 'client_id' if you a using a registered APP",
+            "example": "client_id, access_token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "_populate",
+            "description": "Will join the playlist object with the child object passed. So if you send 'songs', the operation will bring all songs fields for all song registered for the playlist.",
+            "example": "songs",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content. Playlist deleted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/playlistResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request. Something is missing or wrong in the request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized. Client ID or Access Token invalid or not provided.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1024,6 +1530,10 @@
           "discordOwnerId"
         ],
         "properties": {
+          "_id": {
+            "type": "string",
+            "description": "ID of the Guild."
+          },
           "name": {
             "type": "string",
             "description": "Name of the guild."
@@ -1057,6 +1567,90 @@
           "createdAt": {
             "type": "string",
             "description": "Date when the guild was created."
+          }
+        }
+      },
+      "playlistCreateRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "creator"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the playlist."
+          },
+          "creator": {
+            "type": "string",
+            "description": "ID of the user who created the playlist."
+          },
+          "allowModify": {
+            "type": "boolean",
+            "description": "Defines wheter another person is allowed to modify the playlist or not."
+          }
+        }
+      },
+      "playlistResponse": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "playlist": {
+                "$ref": "#/components/schemas/PlaylistObject"
+              }
+            }
+          }
+        }
+      },
+      "playlistArrayResponse": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "playlists": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PlaylistObject"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PlaylistObject": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "description": "ID of the playlist."
+          },
+          "guild": {
+            "type": "string",
+            "description": "ID of the guild the playlist is registered."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the playlist."
+          },
+          "creator": {
+            "type": "string",
+            "description": "ID of the user who created the playlist."
+          },
+          "allowModify": {
+            "type": "boolean",
+            "description": "Defines wheter another person is allowed to modify the playlist or not."
+          },
+          "songs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string"
           }
         }
       },
