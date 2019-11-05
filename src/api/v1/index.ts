@@ -4,6 +4,7 @@ import swagger from 'swagger-ui-express';
 import auth from './routes/auth';
 import guild from './routes/guild';
 import playlist from './routes/playlist';
+import song from './routes/song';
 
 const router = express.Router({ mergeParams: true });
 
@@ -24,5 +25,6 @@ router.use(
 router.use('/auth', auth);
 router.use('/guilds', guild);
 router.use('/playlists', playlist);
+router.use('/song', song);
 
 export default router;

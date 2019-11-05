@@ -17,6 +17,7 @@ import errorTypes from '../../../../app/types/errors';
 
 // Resources
 import playlistRouter from '../playlist';
+import songResourceRouter from '../playlist.resources/song';
 
 const router = express.Router({ mergeParams: true });
 
@@ -82,5 +83,6 @@ router.get('/', async (request, response) => {
 });
 
 router.use('/:playlistId', playlistRouter);
+router.use('/:playlistId/songs', songResourceRouter);
 
 export default router;
