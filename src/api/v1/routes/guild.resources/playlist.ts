@@ -82,7 +82,6 @@ router.get('/', async (request, response) => {
   }
 });
 
-router.use('/:playlistId', playlistRouter);
-router.use('/:playlistId/songs', songResourceRouter);
+router.use('/', playlistRouter);
 
 export default router;

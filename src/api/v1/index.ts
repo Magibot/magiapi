@@ -25,6 +25,6 @@ router.use(
 router.use('/auth', auth);
 router.use('/guilds', guild);
 router.use('/playlists', playlist);
-router.use('/song', song);
+router.use('/song/:songId', song);
 
 export default router;
