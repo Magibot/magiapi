@@ -31,20 +31,32 @@ router.use('/:guildId', async (request, response, next) => {
     typeId = 'objectId';
   }
 
+  let query;
+  if (typeId === 'objectId') {
+    query = { _id: guildId };
+  } else if (typeId === 'discordId') {
+    query = { discordId: guildId };
+  } else {
+    apiResponse.addError({
+      type: errorTypes.validations.invalid.query,
+      message: `Query parameter \`typeId\` is invalid. It should be equals to \`objectId\` or \`discordId\``,
+      kind: 'validations.invalid.query'
+    });
+
+    return response.status(400).json(apiResponse.json());
+  }
+
   try {
     let guild;
-    if (typeId === 'objectId') {
-      guild = await Guild.findById(guildId);
-    } else if (typeId === 'discordId') {
-      guild = await Guild.findOne({ discordId: guildId });
+    const { _populate } = request.query;
+    const isGuildResource = !request.url.startsWith('/?');
+    if (!isGuildResource && _populate && _populate === 'playlists') {
+      guild = await Guild.findOne(query).populate(
+        'playlists',
+        'name creator allowModify createdAt songs'
+      );
     } else {
-      apiResponse.addError({
-        type: errorTypes.validations.invalid.query,
-        message: `Query parameter \`typeId\` is invalid. It should be equals to \`objectId\` or \`discordId\``,
-        kind: 'validations.invalid.query'
-      });
-
-      return response.status(400).json(apiResponse.json());
+      guild = await Guild.findOne(query);
     }
 
     const { method } = request;
@@ -58,14 +70,6 @@ router.use('/:guildId', async (request, response, next) => {
       });
 
       return response.status(404).json(apiResponse.json());
-    }
-
-    const { _populate } = request.query;
-    if (guild && _populate && _populate === 'playlists') {
-      guild = guild.populate(
-        'playlists',
-        'name creator allowModify createdAt songs'
-      );
     }
 
     request.guild = guild;
