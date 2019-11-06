@@ -15,6 +15,7 @@
     "dev": "nodemon",
     "coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
     "test": "mocha ./tests --timeout 1500 --exit",
+    "ci": "npm start && npm test",
     "start": "node ./_build/index.js",
     "postinstall": "npm run build"
   },

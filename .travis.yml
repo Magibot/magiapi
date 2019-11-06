@@ -4,5 +4,6 @@ node_js:
 cache:
   directories:
     - "node_modules"
-script: yarn test
+  yarn: true
+script: yarn ci
 after_success: yarn coverage
