@@ -15,6 +15,7 @@
     "dev": "nodemon",
     "test": "mocha tests",
     "start": "node ./_build/index.js",
+    "preinstall": "npm test",
     "postinstall": "npm run build"
   },
   "dependencies": {
