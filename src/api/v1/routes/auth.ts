@@ -24,8 +24,6 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
         message: 'Field `discordId` is required for guild identification',
         kind: 'validations.required'
       });
-
-      return response.status(400).json(apiResponse.json());
     }
 
     if (!username) {
@@ -34,7 +32,9 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
         message: 'Field `username` is required for guild identification',
         kind: 'validations.required'
       });
+    }
 
+    if (!username || !discordId) {
       return response.status(400).json(apiResponse.json());
     }
 
