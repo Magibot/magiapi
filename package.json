@@ -1,7 +1,7 @@
 {
   "name": "magiapi",
   "version": "1.0.0",
-  "description": "A REST API to connect to Magibot's functionallities ",
+  "description": "A REST API to connect to Magibot's functionallities",
   "main": "index.js",
   "repository": "https://github.com/Magibot/magiapi",
   "author": {
@@ -13,9 +13,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
-    "test": "mocha tests",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
+    "test": "mocha ./tests --timeout 1500 --exit",
     "start": "node ./_build/index.js",
-    "preinstall": "npm test",
     "postinstall": "npm run build"
   },
   "dependencies": {
@@ -57,6 +57,7 @@
     "faker": "^4.1.0",
     "mocha": "^6.2.2",
     "nodemon": "^1.19.4",
+    "nyc": "^14.1.1",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
