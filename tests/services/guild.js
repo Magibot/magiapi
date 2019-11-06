@@ -1,5 +1,5 @@
 const properties = require('../properties');
-const chai = require('chai');
+const chai = require('../config/chai');
 
 const create = async guild => {
   const response = await chai

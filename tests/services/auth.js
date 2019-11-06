@@ -1,7 +1,5 @@
 const properties = require('../properties');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-chai.use(chaiHttp);
+const chai = require('../config/chai');
 
 const register = async user => {
   const response = await chai
