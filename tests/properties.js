@@ -3,7 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '/../.env') });
 
 const baseUrl =
   process.env.NODE_ENV === 'ci'
-    ? 'http://magi-api.herokuapp.com'
+    ? process.env.TEST_API_HOST
     : `http://localhost:${process.env.PORT}`;
 const apiVersion = '/api/v1';
 
