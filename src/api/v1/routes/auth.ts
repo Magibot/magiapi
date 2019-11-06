@@ -96,7 +96,7 @@ router.post('/register', clientIdentificationInterceptor, async (request, respon
   }
 });
 
-router.post('/authenticate', async (request, response) => {
+router.post('/login', async (request, response) => {
   const { username, password } = request.body;
   const apiResponse = new ApiResponse();
   if (!username) {
