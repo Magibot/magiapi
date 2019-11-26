@@ -180,7 +180,7 @@ UserSchema.methods.checkPassword = async function(password: string) {
 
 // Middlewares
 UserSchema.pre<IUser>('save', async function(next) {
-  if (this.isModified('password')) {
+  if (this.isModified('password') && this.password !== undefined) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 
