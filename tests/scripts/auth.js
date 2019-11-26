@@ -8,10 +8,10 @@ const services = {
   guild: require('../services/guild')
 };
 
-describe('User authentication flow', function() {
-  describe('Registration - POST /auth/register', function() {
-    context('Check Client Authorization protection', function() {
-      it('Send the request without Authorization header', async function() {
+describe('User authentication flow', function () {
+  describe('Registration - POST /auth/register', function () {
+    context('Check Client Authorization protection', function () {
+      it('Send the request without Authorization header', async function () {
         const schema = require('../schemas/error');
         const response = await chai
           .request(properties.host)
@@ -30,8 +30,8 @@ describe('User authentication flow', function() {
       });
     });
 
-    context('Register a new user in a new guild', function() {
-      it('Create a new guild', async function() {
+    context('Register a new user in a new guild', function () {
+      it('Create a new guild', async function () {
         const schema = require('../schemas/guild');
         const guild = generator.guild();
         const { name, discordId, region, discordOwnerId, iconHash } = guild;
@@ -49,7 +49,7 @@ describe('User authentication flow', function() {
         global.guilds.push({ ...guild, id: payload.guild._id });
       });
 
-      it('Register a new user', async function() {
+      it('Register a new user', async function () {
         const schema = require('../schemas/auth.register');
         const user = generator.user();
         const { username } = user;
@@ -67,8 +67,8 @@ describe('User authentication flow', function() {
       });
     });
 
-    context('Register the same new user in two differents guilds', function() {
-      it('Create a new guild', async function() {
+    context('Register the same new user in two differents guilds', function () {
+      it('Create a new guild', async function () {
         const schema = require('../schemas/guild');
         const guild = generator.guild();
         const { name, discordId, region, discordOwnerId, iconHash } = guild;
@@ -86,7 +86,7 @@ describe('User authentication flow', function() {
         global.guilds.push({ ...guild, id: payload.guild._id });
       });
 
-      it('Register a new user', async function() {
+      it('Register a new user', async function () {
         const schema = require('../schemas/auth.register');
         const user = generator.user();
         const { username } = user;
@@ -103,7 +103,7 @@ describe('User authentication flow', function() {
         global.users.push(user);
       });
 
-      it('Create another guild', async function() {
+      it('Create another guild', async function () {
         const schema = require('../schemas/guild');
         const guild = generator.guild();
         const { name, discordId, region, discordOwnerId, iconHash } = guild;
@@ -121,7 +121,7 @@ describe('User authentication flow', function() {
         global.guilds.push({ ...guild, id: payload.guild._id });
       });
 
-      it('Register the same user in another guild', async function() {
+      it('Register the same user in another guild', async function () {
         const schema = require('../schemas/user');
         let index = global.users.length - 1;
         const user = global.users[index];
@@ -136,8 +136,8 @@ describe('User authentication flow', function() {
       });
     });
 
-    context('Check validation on register new user', function() {
-      it('Send body without `username`', async function() {
+    context('Check validation on register new user', function () {
+      it('Send body without `username`', async function () {
         const schema = require('../schemas/error');
         const response = await services.auth.register({
           name: 'Username',
@@ -148,7 +148,7 @@ describe('User authentication flow', function() {
         expect(response.body).to.be.jsonSchema(schema, 'JSON Schema validated');
       });
 
-      it('Send body without `discordId`', async function() {
+      it('Send body without `discordId`', async function () {
         const schema = require('../schemas/error');
         const response = await services.auth.register({
           username: 'Username'
@@ -158,7 +158,7 @@ describe('User authentication flow', function() {
         expect(response.body).to.be.jsonSchema(schema, 'JSON Schema validated');
       });
 
-      it('Send body without `username` and `discordId`', async function() {
+      it('Send body without `username` and `discordId`', async function () {
         const schema = require('../schemas/error');
         const response = await services.auth.register({
           name: 'Username',
@@ -172,8 +172,8 @@ describe('User authentication flow', function() {
 
     context(
       'Check if unique `username` and `discordId` is being respected',
-      function() {
-        it('Create a new guild', async function() {
+      function () {
+        it('Create a new guild', async function () {
           const schema = require('../schemas/guild');
           const guild = generator.guild();
           const { name, discordId, region, discordOwnerId, iconHash } = guild;
@@ -194,7 +194,7 @@ describe('User authentication flow', function() {
           global.guilds.push({ ...guild, id: payload.guild._id });
         });
 
-        it('Register a new user', async function() {
+        it('Register a new user', async function () {
           const schema = require('../schemas/auth.register');
           const user = generator.user();
           const { username } = user;
@@ -217,7 +217,7 @@ describe('User authentication flow', function() {
           global.users.push(user);
         });
 
-        it('Send a registered user and guild for user registration', async function() {
+        it('Send a registered user and guild for user registration', async function () {
           const schema = require('../schemas/error');
           let index = global.users.length - 1;
           const user = global.users[index];
@@ -238,5 +238,38 @@ describe('User authentication flow', function() {
         });
       }
     );
+  });
+
+  describe('Login - POST /auth/login', function () {
+    context('Authenticate a user after registration', function () {
+      it('Register a new user', async function () {
+        const schema = require('../schemas/auth.register');
+        const user = generator.user();
+        const { username } = user;
+        const index = global.guilds.length - 1;
+        const { discordId } = global.guilds[index];
+        const response = await services.auth.register({ username, discordId });
+
+        expect(response.status).to.be.equal(201, 'Status code is 201');
+        expect(response.body).to.be.jsonSchema(schema, 'JSON Schema validated');
+        const { token, password } = response.body.payload;
+
+        user.accessToken = token;
+        user.password = password;
+        global.users.push(user);
+      });
+
+      it('Login with the registered user', async function () {
+        let index = global.users.length - 1;
+        const user = global.users[index];
+        const { username, password } = user;
+
+        const response = await services.auth.login({ username, password });
+        expect(response.status).to.be.equal(201, 'Status code is 201');
+        // expect(response.body).to.be.jsonSchema(schema, 'JSON Schema validated');
+        const { token } = response.body.payload;
+        global.users[index].token = token;
+      })
+    });
   });
 });

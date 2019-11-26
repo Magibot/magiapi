@@ -15,4 +15,17 @@ const register = async user => {
   return response;
 };
 
-module.exports = { register };
+const login = async loginData => {
+  const response = await chai
+    .request(properties.host)
+    .post('/auth/login')
+    .set({
+      'Content-Type': 'application/json'
+    })
+    .send(loginData)
+    .catch(err => console.error(err));
+
+  return response;
+};
+
+module.exports = { register, login };
