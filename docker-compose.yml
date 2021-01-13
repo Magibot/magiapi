@@ -14,7 +14,7 @@ services:
 
   application:
     build:
-      context: ./PlaylistManager
+      context: .
     depends_on:
       - mongodb
     ports:
