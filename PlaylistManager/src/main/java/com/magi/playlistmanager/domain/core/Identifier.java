@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-import lombok.Getter;
-
-@Getter
 public class Identifier implements Serializable {
 
     private static final long serialVersionUID = 5109776716398415780L;

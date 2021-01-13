@@ -2,9 +2,6 @@ package com.magi.playlistmanager.domain.core;
 
 import java.util.Objects;
 
-import lombok.Getter;
-
-@Getter
 public class Entity {
     
     private final Identifier id;
@@ -25,6 +22,14 @@ public class Entity {
         this.creationDate = ApplicationDate.of(creationDate);
     }
 
+    public Identifier getId() {
+        return id;
+    }
+
+    public ApplicationDate getCreationDate() {
+        return creationDate;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -43,6 +48,6 @@ public class Entity {
         }
         Entity other = (Entity) o;
         return Objects.equals(id, other.id);
-    }   
+    }
 
 }

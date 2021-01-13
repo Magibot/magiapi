@@ -5,9 +5,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import lombok.Getter;
-
-@Getter
 public class ApplicationDate implements Serializable {
 
     private static final long serialVersionUID = -5736431059634161890L;
