@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Primary
-public class MongoGuildRepositoryImpl implements GuildRepository {
+public class GuildRepositoryMongoImpl implements GuildRepository {
 
     @Autowired
     private GuildCollection guildCollection;
