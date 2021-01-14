@@ -1,13 +1,13 @@
-package com.magi.playlistmanager;
+package com.magi.manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PlaylistManagerApplication {
+public class ManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PlaylistManagerApplication.class, args);
+		SpringApplication.run(ManagerApplication.class, args);
 	}
 
 }

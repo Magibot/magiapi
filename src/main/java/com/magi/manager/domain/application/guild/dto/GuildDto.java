@@ -1,6 +1,6 @@
-package com.magi.playlistmanager.domain.application.guild.dto;
+package com.magi.manager.domain.application.guild.dto;
 
-import com.magi.playlistmanager.domain.core.guild.Guild;
+import com.magi.manager.domain.core.guild.Guild;
 
 public class GuildDto {
     

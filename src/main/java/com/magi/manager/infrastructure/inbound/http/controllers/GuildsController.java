@@ -1,7 +1,7 @@
-package com.magi.playlistmanager.infrastructure.inbound.http.controllers;
+package com.magi.manager.infrastructure.inbound.http.controllers;
 
-import com.magi.playlistmanager.domain.application.guild.GuildApplicationService;
-import com.magi.playlistmanager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.guild.GuildApplicationService;
+import com.magi.manager.domain.application.guild.dto.GuildDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

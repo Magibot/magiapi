@@ -8,11 +8,11 @@
 		<version>2.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.magi.playlistmanager</groupId>
-	<artifactId>PlaylistManager</artifactId>
+	<groupId>com.magi.manager</groupId>
+	<artifactId>Manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>PlaylistManager</name>
-	<description>Magi&apos;s Management of Playlist, handles playlist CRUD operations.</description>
+	<name>Manager</name>
+	<description>Magi&apos;s Management of Guilds, handles guilds and playlists CRUD operations.</description>
 
 	<properties>
 		<java.version>11</java.version>

@@ -1,10 +1,10 @@
-package com.magi.playlistmanager;
+package com.magi.manager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.magi.playlistmanager.domain.application.guild.GuildApplicationService;
-import com.magi.playlistmanager.domain.application.guild.dto.DiscordServerDto;
-import com.magi.playlistmanager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.guild.GuildApplicationService;
+import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
+import com.magi.manager.domain.application.guild.dto.GuildDto;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PlaylistManagerApplicationTests {
+class ManagerApplicationTests {
 
 	@Autowired
 	private MockMvc mockMvc;

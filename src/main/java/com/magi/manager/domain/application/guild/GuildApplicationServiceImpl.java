@@ -1,9 +1,9 @@
-package com.magi.playlistmanager.domain.application.guild;
+package com.magi.manager.domain.application.guild;
 
-import com.magi.playlistmanager.domain.application.guild.dto.DiscordServerDto;
-import com.magi.playlistmanager.domain.application.guild.dto.GuildDto;
-import com.magi.playlistmanager.domain.core.guild.DiscordServer;
-import com.magi.playlistmanager.domain.core.guild.Guild;
+import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
+import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.core.guild.DiscordServer;
+import com.magi.manager.domain.core.guild.Guild;
 
 import org.springframework.stereotype.Service;
 

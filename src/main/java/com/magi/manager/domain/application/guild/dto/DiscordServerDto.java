@@ -1,6 +1,6 @@
-package com.magi.playlistmanager.domain.application.guild.dto;
+package com.magi.manager.domain.application.guild.dto;
 
-import com.magi.playlistmanager.domain.core.guild.DiscordServer;
+import com.magi.manager.domain.core.guild.DiscordServer;
 
 public class DiscordServerDto {
 

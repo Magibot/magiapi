@@ -1,6 +1,6 @@
-package com.magi.playlistmanager.domain.core.guild;
+package com.magi.manager.domain.core.guild;
 
-import com.magi.playlistmanager.domain.core.Entity;
+import com.magi.manager.domain.core.Entity;
 
 public class Guild extends Entity {
     

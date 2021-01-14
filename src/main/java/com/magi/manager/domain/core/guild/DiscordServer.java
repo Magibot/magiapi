@@ -1,4 +1,4 @@
-package com.magi.playlistmanager.domain.core.guild;
+package com.magi.manager.domain.core.guild;
 
 public class DiscordServer {
 

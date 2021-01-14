@@ -1,4 +1,4 @@
-package com.magi.playlistmanager.domain.core;
+package com.magi.manager.domain.core;
 
 import java.io.Serializable;
 import java.util.Objects;
