@@ -5,10 +5,18 @@ import com.magi.manager.domain.application.guild.dto.GuildDto;
 import com.magi.manager.domain.core.guild.DiscordServer;
 import com.magi.manager.domain.core.guild.Guild;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GuildApplicationServiceImpl implements GuildApplicationService {
+
+    private final GuildRepository guildRepository;
+
+    @Autowired
+    public GuildApplicationServiceImpl(final GuildRepository guildRepository) {
+        this.guildRepository = guildRepository;
+    }
 
     private DiscordServer tDiscordServer(DiscordServerDto discordServerDto) {
         return new DiscordServer(
@@ -28,7 +36,9 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     @Override
     public GuildDto createGuild(GuildDto guildDto) {
         Guild guild = toGuild(guildDto);
-        return GuildDto.from(guild);        
+        GuildDto guildCreated = GuildDto.from(guild);
+        this.guildRepository.save(guildCreated);
+        return guildCreated;
     }
     
 }
