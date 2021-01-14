@@ -4,9 +4,9 @@ import com.magi.manager.domain.core.guild.DiscordServer;
 
 public class DiscordServerDto {
 
-    private String idFromDiscord;
-    private String region;
-    private String owner;
+    protected String idFromDiscord;
+    protected String region;
+    protected String owner;
 
     public DiscordServerDto() {
 

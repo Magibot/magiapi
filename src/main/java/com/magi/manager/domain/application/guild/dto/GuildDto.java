@@ -4,11 +4,11 @@ import com.magi.manager.domain.core.guild.Guild;
 
 public class GuildDto {
     
-    private String id;
-    private String name;
-    private String iconHash;
-    private DiscordServerDto discordServer;
-    private String creationDate;
+    protected String id;
+    protected String name;
+    protected String iconHash;
+    protected DiscordServerDto discordServer;
+    protected String creationDate;
 
     public GuildDto() {
 
@@ -18,6 +18,13 @@ public class GuildDto {
         this.name = name;
         this.iconHash = iconHash;
         this.discordServer = discordServer;
+    }
+
+    public GuildDto(String name, String iconHash, DiscordServerDto discordServer, String creationDate) {
+        this.name = name;
+        this.iconHash = iconHash;
+        this.discordServer = discordServer;
+        this.creationDate = creationDate;
     }
 
     public GuildDto(String id, String name, String iconHash, DiscordServerDto discordServer, String creationDate) {
