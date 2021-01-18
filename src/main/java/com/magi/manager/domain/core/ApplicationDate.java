@@ -2,27 +2,26 @@ package com.magi.manager.domain.core;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class ApplicationDate implements Serializable {
 
     private static final long serialVersionUID = -5736431059634161890L;
 
-    private final LocalDateTime value;
+    private final ZonedDateTime value;
 
     public ApplicationDate() {
-        this.value = LocalDateTime.now();
+        this.value = LocalDateTime.now().atZone(ZoneOffset.UTC);;
     }
     
-    public ApplicationDate(LocalDateTime value) {
+    public ApplicationDate(ZonedDateTime value) {
         this.value = value;
     }
 
     public static ApplicationDate of(String value) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        LocalDateTime datetime = LocalDateTime.parse(value, formatter);
-        return new ApplicationDate(datetime);
+        return new ApplicationDate(ZonedDateTime.parse(value));
     }
 
     @Override
