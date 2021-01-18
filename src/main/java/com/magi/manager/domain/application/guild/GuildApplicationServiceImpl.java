@@ -10,6 +10,7 @@ import com.magi.manager.domain.core.guild.CreateGuildFactory;
 import com.magi.manager.domain.core.guild.DiscordServer;
 import com.magi.manager.domain.core.guild.Guild;
 import com.magi.manager.domain.core.playlist.Playlist;
+import com.magi.manager.domain.exception.GuildNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     }
 
     @Override
-    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) {
+    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException {
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
         Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator());
@@ -76,7 +77,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     }
 
     @Override
-    public GuildDto getGuild(String id) {
+    public GuildDto getGuild(String id) throws GuildNotFoundException {
         return guildRepository.findById(id);
     }
     

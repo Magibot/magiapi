@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.magi.manager.domain.application.guild.GuildRepository;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
+import com.magi.manager.domain.exception.GuildNotFoundException;
 import com.magi.manager.infrastructure.outbound.mongo.playlist.PlaylistCollection;
 import com.magi.manager.infrastructure.outbound.mongo.playlist.PlaylistDocument;
 
@@ -28,10 +29,10 @@ public class GuildRepositoryMongoImpl implements GuildRepository {
     }
 
     @Override
-    public void addPlaylist(String guildId, PlaylistDto playlistDto) {
+    public void addPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException {
         Optional<GuildDocument> result = guildCollection.findById(guildId);
         if (result.isEmpty()) {
-            return;
+            throw new GuildNotFoundException(guildId);
         }
 
         PlaylistDocument playlistDocument = PlaylistDocument.of(playlistDto);
@@ -43,10 +44,10 @@ public class GuildRepositoryMongoImpl implements GuildRepository {
     }
 
     @Override
-    public GuildDto findById(String guildId) {
+    public GuildDto findById(String guildId) throws GuildNotFoundException {
         Optional<GuildDocument> result = guildCollection.findById(guildId);
         if (result.isEmpty()) {
-            return null;
+            throw new GuildNotFoundException(guildId);
         }
 
         GuildDocument guildDocument = result.get();

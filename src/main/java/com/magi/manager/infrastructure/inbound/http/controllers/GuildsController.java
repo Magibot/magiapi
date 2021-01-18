@@ -3,6 +3,8 @@ package com.magi.manager.infrastructure.inbound.http.controllers;
 import com.magi.manager.domain.application.guild.GuildApplicationService;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
+import com.magi.manager.domain.exception.GuildNotFoundException;
+import com.magi.manager.infrastructure.inbound.http.exception.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +34,22 @@ public class GuildsController {
 
     @GetMapping("{id}")
     public ResponseEntity<GuildDto> getGuildById(@PathVariable String id) {
-        GuildDto guild = guildApplicationService.getGuild(id);
-        return ResponseEntity.status(200).body(guild);
+        try {
+            GuildDto guild = guildApplicationService.getGuild(id);
+            return ResponseEntity.status(200).body(guild);
+        } catch (GuildNotFoundException ex) {
+            throw new ResourceNotFoundException(ex.getMessage());
+        }
     }
 
     @PostMapping("{id}/playlists")
     public ResponseEntity<PlaylistDto> postPlaylist(@PathVariable String id, @RequestBody PlaylistDto playlistDto) {
-        PlaylistDto playlist = guildApplicationService.createPlaylist(id, playlistDto);
-        return ResponseEntity.status(201).body(playlist);
+        try {
+            PlaylistDto playlist = guildApplicationService.createPlaylist(id, playlistDto);
+            return ResponseEntity.status(201).body(playlist);
+        } catch (GuildNotFoundException ex) {
+            throw new ResourceNotFoundException(ex.getMessage());
+        }
     }
     
 }
