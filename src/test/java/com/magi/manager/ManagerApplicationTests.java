@@ -7,6 +7,7 @@ import com.magi.manager.domain.application.guild.GuildApplicationServiceImpl;
 import com.magi.manager.domain.application.guild.GuildRepository;
 import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.core.guild.CreateGuildFactory;
 import com.magi.manager.setup.GuildRepositoryInMemoryImpl;
 
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 class ManagerApplicationTests {
 
 	private GuildRepository guildRepository = new GuildRepositoryInMemoryImpl();
-	private GuildApplicationService guildApplicationService = new GuildApplicationServiceImpl(guildRepository);
+	private CreateGuildFactory createGuildFactory = new CreateGuildFactory();
+	private GuildApplicationService guildApplicationService = new GuildApplicationServiceImpl(guildRepository, createGuildFactory);
 
 	@Test
 	void shouldCreateGuild() {
