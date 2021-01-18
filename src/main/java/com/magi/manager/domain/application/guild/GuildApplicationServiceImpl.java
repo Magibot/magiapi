@@ -74,5 +74,10 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         guildRepository.addPlaylist(guildId, playlistCreated);;
         return playlistCreated;
     }
+
+    @Override
+    public GuildDto getGuild(String id) {
+        return guildRepository.findById(id);
+    }
     
 }

@@ -9,4 +9,6 @@ public interface GuildApplicationService {
 
     PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto);
 
+    GuildDto getGuild(String id);
+
 }
