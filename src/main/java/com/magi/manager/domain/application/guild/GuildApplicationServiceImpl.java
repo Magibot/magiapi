@@ -18,7 +18,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         this.guildRepository = guildRepository;
     }
 
-    private DiscordServer tDiscordServer(DiscordServerDto discordServerDto) {
+    private DiscordServer toDiscordServer(DiscordServerDto discordServerDto) {
         return new DiscordServer(
             discordServerDto.getIdFromDiscord(),
             discordServerDto.getRegion(),
@@ -26,7 +26,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     }
 
     private Guild toGuild(GuildDto guildDto) {
-        DiscordServer discordServer = this.tDiscordServer(guildDto.getDiscordServer());
+        DiscordServer discordServer = this.toDiscordServer(guildDto.getDiscordServer());
         return new Guild(
             guildDto.getName(), 
             guildDto.getIconHash(), 
