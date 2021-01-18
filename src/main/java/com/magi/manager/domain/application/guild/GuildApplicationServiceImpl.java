@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class GuildApplicationServiceImpl implements GuildApplicationService {
 
-    @Autowired
-    private CreateGuildFactory createGuildFactory;
+    private final CreateGuildFactory createGuildFactory;
 
     private final GuildRepository guildRepository;
 
     @Autowired
-    public GuildApplicationServiceImpl(final GuildRepository guildRepository) {
+    public GuildApplicationServiceImpl(final GuildRepository guildRepository, final CreateGuildFactory createGuildFactory) {
         this.guildRepository = guildRepository;
+        this.createGuildFactory = createGuildFactory;
     }
 
     private Playlist toPlaylist(PlaylistDto playlistDto) {
