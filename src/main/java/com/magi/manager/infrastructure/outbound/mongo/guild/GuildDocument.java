@@ -23,23 +23,24 @@ public class GuildDocument {
     private final List<PlaylistDocument> playlists;
     private final String creationDate;
 
-    public GuildDocument(String id, String name, String iconHash, DiscordServerDto discordServer, List<PlaylistDto> playlists, String creationDate) {
+    public GuildDocument(String id, String name, String iconHash, DiscordServerDto discordServer, List<PlaylistDocument> playlists, String creationDate) {
         this.id = id;
         this.name = name;
         this.iconHash = iconHash;
         this.discordServer = discordServer;
-        this.playlists = new ArrayList<>();
-        playlists.forEach(playlistDto -> this.playlists.add(PlaylistDocument.of(playlistDto)));
+        this.playlists = playlists;
         this.creationDate = creationDate;
     }
 
     public static GuildDocument of(GuildDto guildDto) {
+        List<PlaylistDocument> playlistDocuments = new ArrayList<>();
+        guildDto.getPlaylists().forEach(p -> playlistDocuments.add(PlaylistDocument.of(p)));
         return new GuildDocument(
             guildDto.getId(),
             guildDto.getName(),
             guildDto.getIconHash(),
             guildDto.getDiscordServer(),
-            guildDto.getPlaylists(),
+            playlistDocuments,
             guildDto.getCreationDate());
     }
 
