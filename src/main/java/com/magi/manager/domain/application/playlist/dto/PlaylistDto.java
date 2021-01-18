@@ -14,9 +14,8 @@ public class PlaylistDto {
         
     }
 
-    public PlaylistDto(String name, String guildId, String creator) {
+    public PlaylistDto(String name, String creator) {
         this.name = name;
-        this.guildId = guildId;
         this.creator = creator;
     }
 
