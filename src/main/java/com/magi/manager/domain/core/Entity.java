@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class Entity {
     
-    private final Identifier id;
-    private final ApplicationDate creationDate;
+    protected Identifier id;
+    protected ApplicationDate creationDate;
 
     public Entity() {
         this.id = new Identifier();
