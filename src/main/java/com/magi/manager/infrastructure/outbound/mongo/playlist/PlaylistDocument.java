@@ -6,14 +6,22 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "playlist")
-public class PlaylistDocument extends PlaylistDto {
+public class PlaylistDocument {
 
     @Id
     private final String id;
 
+    private final String name;
+    private final String guildId;
+    private final String creator;
+    private final String creationDate;
+
     public PlaylistDocument(String id, String name, String guildId, String creator, String creationDate) {
-        super(name, guildId, creator, creationDate);
         this.id = id;
+        this.name = name;
+        this.guildId = guildId;
+        this.creator = creator;
+        this.creationDate = creationDate;
     }
 
     public static PlaylistDocument of(PlaylistDto playlistDto) {
