@@ -1,5 +1,8 @@
 package com.magi.manager.domain.core.guild;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class CreateGuildFactory {
 
     public Guild execute(String name, String iconHash, DiscordServer discordServer) {
