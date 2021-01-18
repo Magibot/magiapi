@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.magi.manager.domain.application.guild.GuildRepository;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 
 public class GuildRepositoryInMemoryImpl implements GuildRepository {
 
@@ -13,6 +14,18 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
     @Override
     public void save(GuildDto guildDto) {
         guilds.add(guildDto);
+    }
+
+    @Override
+    public void addPlaylist(String guildId, PlaylistDto playlistDto) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public GuildDto findById(String guildId) {
+        // TODO Auto-generated method stub
+        return null;
     }
     
 }
