@@ -1,7 +1,6 @@
 package com.magi.manager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 import com.magi.manager.domain.application.guild.GuildApplicationService;
 import com.magi.manager.domain.application.guild.GuildApplicationServiceImpl;
