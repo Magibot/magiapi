@@ -1,26 +1,23 @@
 package com.magi.manager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 import com.magi.manager.domain.application.guild.GuildApplicationService;
+import com.magi.manager.domain.application.guild.GuildApplicationServiceImpl;
+import com.magi.manager.domain.application.guild.GuildRepository;
 import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.setup.GuildRepositoryInMemoryImpl;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class ManagerApplicationTests {
 
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private GuildApplicationService guildApplicationService;
+	private GuildRepository guildRepository = new GuildRepositoryInMemoryImpl();
+	private GuildApplicationService guildApplicationService = new GuildApplicationServiceImpl(guildRepository);
 
 	@Test
 	void shouldCreateGuild() {
