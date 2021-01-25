@@ -5,10 +5,12 @@ import java.util.List;
 
 import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.member.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.core.guild.CreateGuildFactory;
 import com.magi.manager.domain.core.guild.DiscordServer;
 import com.magi.manager.domain.core.guild.Guild;
+import com.magi.manager.domain.core.member.Member;
 import com.magi.manager.domain.core.playlist.Playlist;
 import com.magi.manager.domain.exception.GuildNotFoundException;
 
@@ -28,6 +30,15 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         this.createGuildFactory = createGuildFactory;
     }
 
+    private Member toMember(MemberDto memberDto) {
+        return new Member(
+            memberDto.getId(),
+            memberDto.getIdFromDiscord(),
+            memberDto.getName(),
+            memberDto.getCreationDate()
+        );
+    }
+
     private Playlist toPlaylist(PlaylistDto playlistDto) {
         return new Playlist(
             playlistDto.getId(),
@@ -45,6 +56,8 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     private Guild toGuild(GuildDto guildDto) {
         List<Playlist> playlists = new ArrayList<>();
         guildDto.getPlaylists().forEach(playlistDto -> playlists.add(toPlaylist(playlistDto)));
+        List<Member> members = new ArrayList<>();
+        guildDto.getMembers().forEach(memberDto -> members.add(toMember(memberDto)));
         DiscordServer discordServer = this.toDiscordServer(guildDto.getDiscordServer());
         return new Guild(
             guildDto.getId(),
@@ -52,6 +65,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
             guildDto.getIconHash(),
             discordServer, 
             playlists, 
+            members,
             guildDto.getCreationDate());
     }
 

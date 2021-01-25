@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.member.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.infrastructure.outbound.mongo.playlist.PlaylistDocument;
 
@@ -47,12 +48,14 @@ public class GuildDocument {
     public GuildDto toDto() {
         List<PlaylistDto> playlistDtos = new ArrayList<>();
         playlists.forEach(playlist -> playlistDtos.add(playlist.toDto()));
+        List<MemberDto> memberDtos = new ArrayList<>();
         return new GuildDto(
             id,
             name,
             iconHash,
             discordServer,
             playlistDtos,
+            memberDtos,
             creationDate
         );
     }

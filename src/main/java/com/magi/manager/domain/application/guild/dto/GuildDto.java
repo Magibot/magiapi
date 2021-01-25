@@ -3,6 +3,7 @@ package com.magi.manager.domain.application.guild.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.magi.manager.domain.application.member.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.core.guild.Guild;
 
@@ -13,6 +14,7 @@ public class GuildDto {
     protected String iconHash;
     protected DiscordServerDto discordServer;
     protected List<PlaylistDto> playlists;
+    protected List<MemberDto> members;
     protected String creationDate;
 
     public GuildDto() {
@@ -32,18 +34,21 @@ public class GuildDto {
         this.creationDate = creationDate;
     }
 
-    public GuildDto(String id, String name, String iconHash, DiscordServerDto discordServer, List<PlaylistDto> playlists, String creationDate) {
+    public GuildDto(String id, String name, String iconHash, DiscordServerDto discordServer, List<PlaylistDto> playlists, List<MemberDto> members, String creationDate) {
         this.id = id;
         this.name = name;
         this.iconHash = iconHash;
         this.discordServer = discordServer;
         this.playlists = playlists;
+        this.members = members;
         this.creationDate = creationDate;
     }
 
     public static GuildDto from(Guild guild) {
         List<PlaylistDto> playlistDtos = new ArrayList<>();
         guild.getPlaylists().forEach(playlist -> playlistDtos.add(PlaylistDto.from(playlist)));
+        List<MemberDto> memberDtos = new ArrayList<>();
+        guild.getMembers().forEach(member -> memberDtos.add(MemberDto.from(member)));
         DiscordServerDto discordServerDto = DiscordServerDto.from(guild.getDiscordServer());
         return new GuildDto(
             guild.getId().toString(), 
@@ -51,6 +56,7 @@ public class GuildDto {
             guild.getIconHash(), 
             discordServerDto,
             playlistDtos,
+            memberDtos,
             guild.getCreationDate().toString());
     }
 
@@ -98,8 +104,16 @@ public class GuildDto {
         this.playlists = playlists;
     }
 
+    public List<MemberDto> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<MemberDto> members) {
+        this.members = members;
+    }
+
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
-    }
+    }    
 
 }
