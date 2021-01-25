@@ -25,15 +25,35 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
     }
 
     @Override
-    public GuildDto findById(String guildId) {
-        // TODO Auto-generated method stub
-        return null;
+    public GuildDto findById(String guildId) throws GuildNotFoundException {
+        GuildDto guild = null;
+        for (GuildDto g : guilds) {
+            if (g.getId() == guildId) {
+                guild = g;
+            }
+        }
+
+        if (guild == null) {
+            throw new GuildNotFoundException(guildId);
+        }
+        return guild;
     }
 
     @Override
     public void addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException {
-        // TODO Auto-generated method stub
+        Boolean found = false;
+        for (GuildDto g : guilds) {
+            if (g.getId() == guildId) {
+                found = true;
+                List<MemberDto> members = g.getMembers();
+                members.add(memberDto);
+                g.setMembers(members);
+            }
+        }
 
+        if (!found) {
+            throw new GuildNotFoundException(guildId);
+        }
     }
     
 }
