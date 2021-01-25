@@ -12,14 +12,14 @@ public class MemberDocument {
     private final String id;
 
     private final String idFromDiscord;
-    private final String name;
+    private final String username;
     private final Boolean isAdministrator;
     private final String creationDate;
 
-    public MemberDocument(String id, String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
+    public MemberDocument(String id, String idFromDiscord, String username, Boolean isAdministrator, String creationDate) {
         this.id = id;
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
         this.creationDate = creationDate;
     }
@@ -28,7 +28,7 @@ public class MemberDocument {
         return new MemberDocument(
             memberDto.getId(),
             memberDto.getIdFromDiscord(),
-            memberDto.getName(),
+            memberDto.getUsername(),
             memberDto.getIsAdministrator(),
             memberDto.getCreationDate()
         );
@@ -38,7 +38,7 @@ public class MemberDocument {
         return new MemberDto(
             id,
             idFromDiscord,
-            name,
+            username,
             isAdministrator,
             creationDate
         );

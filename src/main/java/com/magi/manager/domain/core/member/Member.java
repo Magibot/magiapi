@@ -5,20 +5,20 @@ import com.magi.manager.domain.core.Entity;
 public class Member extends Entity {
 
     private final String idFromDiscord;
-    private final String name;
+    private final String username;
     private final Boolean isAdministrator;
 
-    public Member(String idFromDiscord, String name, Boolean isAdministrator) {
+    public Member(String idFromDiscord, String username, Boolean isAdministrator) {
         super();
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
     }
 
-    public Member(String id, String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
+    public Member(String id, String idFromDiscord, String username, Boolean isAdministrator, String creationDate) {
         super(id, creationDate);
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
     }
 
@@ -26,8 +26,8 @@ public class Member extends Entity {
         return idFromDiscord;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
     public Boolean getIsAdministrator() {

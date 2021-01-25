@@ -6,7 +6,7 @@ public class MemberDto {
 
     protected String id;
     protected String idFromDiscord;
-    protected String name;
+    protected String username;
     protected Boolean isAdministrator;
     protected String creationDate;
 
@@ -14,23 +14,23 @@ public class MemberDto {
 
     }
 
-    public MemberDto(String idFromDiscord, String name, Boolean isAdministrator) {
+    public MemberDto(String idFromDiscord, String username, Boolean isAdministrator) {
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
     }
 
-    public MemberDto(String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
+    public MemberDto(String idFromDiscord, String username, Boolean isAdministrator, String creationDate) {
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
         this.creationDate = creationDate;
     }
 
-    public MemberDto(String id, String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
+    public MemberDto(String id, String idFromDiscord, String username, Boolean isAdministrator, String creationDate) {
         this.id = id;
         this.idFromDiscord = idFromDiscord;
-        this.name = name;
+        this.username = username;
         this.isAdministrator = isAdministrator;
         this.creationDate = creationDate;
     }
@@ -39,7 +39,7 @@ public class MemberDto {
         return new MemberDto(
             member.getId().toString(),
             member.getIdFromDiscord(),
-            member.getName(),
+            member.getUsername(),
             member.getIsAdministrator(),
             member.getCreationDate().toString()
         );
@@ -61,12 +61,12 @@ public class MemberDto {
         this.idFromDiscord = idFromDiscord;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Boolean getIsAdministrator() {
