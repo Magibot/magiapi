@@ -2,6 +2,7 @@ package com.magi.manager.infrastructure.inbound.http.controllers;
 
 import com.magi.manager.domain.application.guild.GuildApplicationService;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
+import com.magi.manager.domain.application.member.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.exception.GuildNotFoundException;
 import com.magi.manager.infrastructure.inbound.http.exception.ResourceNotFoundException;
@@ -47,6 +48,16 @@ public class GuildsController {
         try {
             PlaylistDto playlist = guildApplicationService.createPlaylist(id, playlistDto);
             return ResponseEntity.status(201).body(playlist);
+        } catch (GuildNotFoundException ex) {
+            throw new ResourceNotFoundException(ex.getMessage());
+        }
+    }
+
+    @PostMapping("{id}/members")
+    public ResponseEntity<MemberDto> postMember(@PathVariable String id, @RequestBody MemberDto memberDto) {
+        try {
+            MemberDto member = guildApplicationService.addMember(id, memberDto);
+            return ResponseEntity.status(201).body(member);
         } catch (GuildNotFoundException ex) {
             throw new ResourceNotFoundException(ex.getMessage());
         }
