@@ -42,8 +42,8 @@ public class Guild extends Entity {
         return newPlaylist;
     }
 
-    public Member addMember(String idFromDiscord, String name) {
-        Member newMember = new Member(idFromDiscord, name);
+    public Member addMember(String idFromDiscord, String name, Boolean isAdministrator) {
+        Member newMember = new Member(idFromDiscord, name, isAdministrator);
         members.add(newMember);
         return newMember;
     }

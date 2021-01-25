@@ -35,6 +35,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
             memberDto.getId(),
             memberDto.getIdFromDiscord(),
             memberDto.getName(),
+            memberDto.getIsAdministrator(),
             memberDto.getCreationDate()
         );
     }
@@ -99,7 +100,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     public MemberDto addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException {
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
-        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getName());
+        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getName(), memberDto.getIsAdministrator());
         MemberDto memberCreated = MemberDto.from(member);
         guildRepository.addMember(guildId, memberCreated);
         return memberCreated;

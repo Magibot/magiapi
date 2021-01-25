@@ -7,27 +7,31 @@ public class MemberDto {
     protected String id;
     protected String idFromDiscord;
     protected String name;
+    protected Boolean isAdministrator;
     protected String creationDate;
 
     public MemberDto() {
 
     }
 
-    public MemberDto(String idFromDiscord, String name) {
+    public MemberDto(String idFromDiscord, String name, Boolean isAdministrator) {
         this.idFromDiscord = idFromDiscord;
         this.name = name;
+        this.isAdministrator = isAdministrator;
     }
 
-    public MemberDto(String idFromDiscord, String name, String creationDate) {
+    public MemberDto(String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
         this.idFromDiscord = idFromDiscord;
         this.name = name;
+        this.isAdministrator = isAdministrator;
         this.creationDate = creationDate;
     }
 
-    public MemberDto(String id, String idFromDiscord, String name, String creationDate) {
+    public MemberDto(String id, String idFromDiscord, String name, Boolean isAdministrator, String creationDate) {
         this.id = id;
         this.idFromDiscord = idFromDiscord;
         this.name = name;
+        this.isAdministrator = isAdministrator;
         this.creationDate = creationDate;
     }
 
@@ -36,6 +40,7 @@ public class MemberDto {
             member.getId().toString(),
             member.getIdFromDiscord(),
             member.getName(),
+            member.getIsAdministrator(),
             member.getCreationDate().toString()
         );
     }
@@ -64,6 +69,14 @@ public class MemberDto {
         this.name = name;
     }
 
+    public Boolean getIsAdministrator() {
+        return isAdministrator;
+    }
+
+    public void setIsAdministrator(Boolean isAdministrator) {
+        this.isAdministrator = isAdministrator;
+    }
+
     public String getCreationDate() {
         return creationDate;
     }
@@ -71,5 +84,5 @@ public class MemberDto {
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
-    
+
 }
