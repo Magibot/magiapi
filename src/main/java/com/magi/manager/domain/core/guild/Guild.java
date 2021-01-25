@@ -42,6 +42,12 @@ public class Guild extends Entity {
         return newPlaylist;
     }
 
+    public Member addMember(String idFromDiscord, String name) {
+        Member newMember = new Member(idFromDiscord, name);
+        members.add(newMember);
+        return newMember;
+    }
+
     public String getName() {
         return name;
     }

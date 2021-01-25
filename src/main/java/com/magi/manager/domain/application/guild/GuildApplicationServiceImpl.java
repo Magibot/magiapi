@@ -86,13 +86,23 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         Guild guild = toGuild(guildDto);
         Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator());
         PlaylistDto playlistCreated = PlaylistDto.from(playlist);
-        guildRepository.addPlaylist(guildId, playlistCreated);;
+        guildRepository.addPlaylist(guildId, playlistCreated);
         return playlistCreated;
     }
 
     @Override
     public GuildDto getGuild(String id) throws GuildNotFoundException {
         return guildRepository.findById(id);
+    }
+
+    @Override
+    public MemberDto addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException {
+        GuildDto guildDto = guildRepository.findById(guildId);
+        Guild guild = toGuild(guildDto);
+        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getName());
+        MemberDto memberCreated = MemberDto.from(member);
+        guildRepository.addMember(guildId, memberCreated);
+        return memberCreated;
     }
     
 }
