@@ -7,6 +7,8 @@ import com.magi.manager.domain.application.guild.dto.GuildDto;
 import com.magi.manager.domain.application.member.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.exception.GuildNotFoundException;
+import com.magi.manager.infrastructure.outbound.mongo.member.MemberCollection;
+import com.magi.manager.infrastructure.outbound.mongo.member.MemberDocument;
 import com.magi.manager.infrastructure.outbound.mongo.playlist.PlaylistCollection;
 import com.magi.manager.infrastructure.outbound.mongo.playlist.PlaylistDocument;
 
@@ -23,6 +25,9 @@ public class GuildRepositoryMongoImpl implements GuildRepository {
 
     @Autowired
     private PlaylistCollection playlistCollection;
+
+    @Autowired
+    private MemberCollection memberCollection;
 
     @Override
     public void save(GuildDto guildDto) {
@@ -57,8 +62,17 @@ public class GuildRepositoryMongoImpl implements GuildRepository {
 
     @Override
     public void addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException {
-        // TODO Auto-generated method stub
+        Optional<GuildDocument> result = guildCollection.findById(guildId);
+        if (result.isEmpty()) {
+            throw new GuildNotFoundException(guildId);
+        }
 
+        MemberDocument memberDocument = MemberDocument.of(memberDto);
+        memberDocument = memberCollection.save(memberDocument);
+
+        GuildDocument guildDocument = result.get();
+        guildDocument.addMember(memberDocument);
+        guildCollection.save(guildDocument);
     }
     
     
