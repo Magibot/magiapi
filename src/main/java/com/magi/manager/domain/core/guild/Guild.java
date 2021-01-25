@@ -27,13 +27,12 @@ public class Guild extends Entity {
     }
 
     public Guild(String id, String name, String iconHash, DiscordServer discordServer, List<Playlist> playlists, List<Member> members, String creationDate) {
-        this.id = Identifier.of(id);
+        super(id, creationDate);
         this.name = name;
         this.iconHash = iconHash;
         this.discordServer = discordServer;
         this.playlists = playlists;
         this.members = members;
-        this.creationDate = ApplicationDate.of(creationDate);
     }
 
     public Playlist createPlaylist(String name, String creator) {

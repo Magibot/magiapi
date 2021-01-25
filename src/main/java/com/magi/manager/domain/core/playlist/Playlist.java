@@ -18,11 +18,10 @@ public class Playlist extends Entity {
     }
 
     public Playlist(String id, String name, String guildId, String creator, String creationDate) {
-        this.id = Identifier.of(id);
+        super(id, creationDate);
         this.name = name;
         this.guildId = Identifier.of(guildId);
         this.creator = creator;
-        this.creationDate = ApplicationDate.of(creationDate);
     }
 
     public String getName() {
