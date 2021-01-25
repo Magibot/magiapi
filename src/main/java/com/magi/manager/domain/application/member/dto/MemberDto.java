@@ -1,4 +1,4 @@
-package com.magi.manager.domain.application.member;
+package com.magi.manager.domain.application.member.dto;
 
 import com.magi.manager.domain.core.member.Member;
 

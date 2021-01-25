@@ -5,7 +5,7 @@ import com.magi.manager.domain.core.Entity;
 public class Member extends Entity {
 
     private final String idFromDiscord;
-    private final String name;
+    private String name;
 
     public Member(String idFromDiscord, String name) {
         super();
@@ -16,6 +16,10 @@ public class Member extends Entity {
     public Member(String id, String idFromDiscord, String name, String creationDate) {
         super(id, creationDate);
         this.idFromDiscord = idFromDiscord;
+        this.name = name;
+    }
+
+    public void changeName(String name) {
         this.name = name;
     }
 

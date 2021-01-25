@@ -1,6 +1,6 @@
 package com.magi.manager.infrastructure.outbound.mongo.member;
 
-import com.magi.manager.domain.application.member.MemberDto;
+import com.magi.manager.domain.application.member.dto.MemberDto;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.magi.manager.domain.application.guild.dto.DiscordServerDto;
 import com.magi.manager.domain.application.guild.dto.GuildDto;
-import com.magi.manager.domain.application.member.MemberDto;
+import com.magi.manager.domain.application.member.dto.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.core.guild.CreateGuildFactory;
 import com.magi.manager.domain.core.guild.DiscordServer;

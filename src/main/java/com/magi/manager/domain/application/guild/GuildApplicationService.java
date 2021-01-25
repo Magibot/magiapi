@@ -1,7 +1,7 @@
 package com.magi.manager.domain.application.guild;
 
 import com.magi.manager.domain.application.guild.dto.GuildDto;
-import com.magi.manager.domain.application.member.MemberDto;
+import com.magi.manager.domain.application.member.dto.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.exception.GuildNotFoundException;
 

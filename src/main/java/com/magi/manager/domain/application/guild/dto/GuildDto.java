@@ -3,7 +3,7 @@ package com.magi.manager.domain.application.guild.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.magi.manager.domain.application.member.MemberDto;
+import com.magi.manager.domain.application.member.dto.MemberDto;
 import com.magi.manager.domain.application.playlist.dto.PlaylistDto;
 import com.magi.manager.domain.core.guild.Guild;
 
