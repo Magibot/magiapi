@@ -55,6 +55,7 @@ public class GuildDocument {
         List<PlaylistDto> playlistDtos = new ArrayList<>();
         playlists.forEach(playlist -> playlistDtos.add(playlist.toDto()));
         List<MemberDto> memberDtos = new ArrayList<>();
+        members.forEach(member -> memberDtos.add(member.toDto()));
         return new GuildDto(
             id,
             name,
