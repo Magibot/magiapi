@@ -1,6 +1,5 @@
 package com.magi.manager.domain.core.playlist;
 
-import com.magi.manager.domain.core.ApplicationDate;
 import com.magi.manager.domain.core.Entity;
 import com.magi.manager.domain.core.Identifier;
 

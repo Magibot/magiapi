@@ -3,9 +3,7 @@ package com.magi.manager.domain.core.guild;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.magi.manager.domain.core.ApplicationDate;
 import com.magi.manager.domain.core.Entity;
-import com.magi.manager.domain.core.Identifier;
 import com.magi.manager.domain.core.member.Member;
 import com.magi.manager.domain.core.playlist.Playlist;
 
