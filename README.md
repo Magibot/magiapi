@@ -1,5 +1,5 @@
-# magiapi
+# Venuses Manager
 
-[![Build Status](https://travis-ci.org/elis-platform/manager.svg?branch=master)](https://travis-ci.org/elis-platform/manager)
+[![Build Status](https://travis-ci.org/venuses-projects/manager.svg?branch=master)](https://travis-ci.org/venuses-projects/manager)
 
-Magibot's REST API
+It is a REST API that handles guilds, member and playlists operations.
