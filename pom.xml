@@ -8,11 +8,11 @@
 		<version>2.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.magi.manager</groupId>
+	<groupId>com.venuses.manager</groupId>
 	<artifactId>Manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Manager</name>
-	<description>Magi&apos;s Management of Guilds, handles guilds and playlists CRUD operations.</description>
+	<description>Venuses management, it is a REST API that handles guilds, member and playlists operations.</description>
 
 	<properties>
 		<java.version>11</java.version>
