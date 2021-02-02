@@ -19,9 +19,20 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
     }
 
     @Override
-    public void addPlaylist(String guildId, PlaylistDto playlistDto) {
-        // TODO Auto-generated method stub
+    public void addPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException {
+        Boolean found = false;
+        for (GuildDto g : guilds) {
+            if (g.getId() == guildId) {
+                found = true;
+                List<PlaylistDto> playlists = g.getPlaylists();
+                playlists.add(playlistDto);
+                g.setPlaylists(playlists);
+            }
+        }
 
+        if (!found) {
+            throw new GuildNotFoundException(guildId);
+        }
     }
 
     @Override
