@@ -9,6 +9,7 @@ import com.venuses.manager.domain.application.guild.GuildRepository;
 import com.venuses.manager.domain.application.guild.dto.DiscordServerDto;
 import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
+import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
 import com.venuses.manager.setup.GuildRepositoryInMemoryImpl;
@@ -51,6 +52,25 @@ class ManagerApplicationTests {
 
 		guild = this.guildApplicationService.getGuild(guild.getId());
 		assertTrue(guild.getMembers().contains(member));
+	}
+
+	@Test
+	void shouldCreatePlaylist() throws GuildNotFoundException {
+		GuildDto guildRequest = new GuildDto(
+			"Python Community",
+			"98279878926",
+			new DiscordServerDto("3", "Italy", "Guido")
+		);
+		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
+		assertNotNull(guild.getId());
+
+		PlaylistDto playlistRequest = new PlaylistDto("Playlist of Rock", "John Doe");
+		PlaylistDto playlist = this.guildApplicationService.createPlaylist(guild.getId(), playlistRequest);
+		assertNotNull(playlist.getId());
+		assertNotNull(playlist.getCreationDate());
+
+		guild = this.guildApplicationService.getGuild(guild.getId());
+		assertTrue(guild.getPlaylists().contains(playlist));
 	}
 
 }
