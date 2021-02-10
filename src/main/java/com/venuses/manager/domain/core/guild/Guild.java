@@ -6,6 +6,7 @@ import java.util.List;
 import com.venuses.manager.domain.core.Entity;
 import com.venuses.manager.domain.core.member.Member;
 import com.venuses.manager.domain.core.playlist.Playlist;
+import com.venuses.manager.domain.exception.MemberDuplicatedException;
 
 public class Guild extends Entity {
     
@@ -39,10 +40,25 @@ public class Guild extends Entity {
         return newPlaylist;
     }
 
-    public Member addMember(String idFromDiscord, String name, Boolean isAdministrator) {
+    public Member addMember(String idFromDiscord, String name, Boolean isAdministrator) throws MemberDuplicatedException {
         Member newMember = new Member(idFromDiscord, name, isAdministrator);
+        Member existingMember = getMemberByIdFromDiscord(idFromDiscord);
+        if (existingMember != null) {
+            throw new MemberDuplicatedException("Member " + name + " (idFromDiscord=" + idFromDiscord + ") was already added to Guild " + this.name + "(id=" + this.id + ").");
+        }
+
         members.add(newMember);
         return newMember;
+    }
+
+    public Member getMemberByIdFromDiscord(String idFromDiscord) {
+        for (Member m : members ) {
+            if (m.getIdFromDiscord() == idFromDiscord) {
+                return m;
+            }
+        }
+
+        return null;
     }
 
     public String getName() {
