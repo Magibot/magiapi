@@ -31,20 +31,4 @@ public class MemberRepositoryInMemoryImpl implements MemberRepository {
         return member;
     }
 
-    @Override
-    public MemberDto findByIdFromDiscord(String idFromDiscord) throws MemberNotFoundException {
-        MemberDto member = null;
-        for (MemberDto m : members) {
-            if (m.getIdFromDiscord() == idFromDiscord) {
-                member = m;
-            }
-        }
-
-        if (member == null) {
-            throw new MemberNotFoundException("ididFromDiscord=" + idFromDiscord);
-        }
-
-        return member;
-    }
-
 }

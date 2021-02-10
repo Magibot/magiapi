@@ -125,15 +125,10 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     public MemberDto addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException, MemberDuplicatedException{
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
-        try {
-            MemberDto existingMember = memberRepository.findByIdFromDiscord(memberDto.getIdFromDiscord());
-            throw new MemberDuplicatedException("Member id=" + existingMember.getId() + " and idFromDiscord=" + existingMember.getIdFromDiscord() + " is already created.");
-        } catch (MemberNotFoundException e) {
-            Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getUsername(), memberDto.getIsAdministrator());
-            MemberDto memberCreated = MemberDto.from(member);
-            guildRepository.addMember(guildId, memberCreated);
-            return memberCreated;
-        }
+        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getUsername(), memberDto.getIsAdministrator());
+        MemberDto memberCreated = MemberDto.from(member);
+        guildRepository.addMember(guildId, memberCreated);
+        return memberCreated;
     }
     
 }

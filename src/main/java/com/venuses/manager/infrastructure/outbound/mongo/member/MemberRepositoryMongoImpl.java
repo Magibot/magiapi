@@ -1,6 +1,5 @@
 package com.venuses.manager.infrastructure.outbound.mongo.member;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.venuses.manager.domain.application.member.MemberRepository;
@@ -27,16 +26,6 @@ public class MemberRepositoryMongoImpl implements MemberRepository {
 
         MemberDocument memberDocument = result.get();
         return memberDocument.toDto();
-    }
-
-    @Override
-    public MemberDto findByIdFromDiscord(String idFromDiscord) throws MemberNotFoundException {
-        List<MemberDocument> result = memberCollection.findByIdFromDiscord(idFromDiscord);
-        if (result.isEmpty()) {
-            throw new MemberNotFoundException("idFromDiscord=" + idFromDiscord);
-        }
-
-        return result.get(0).toDto();
     }
     
 }
