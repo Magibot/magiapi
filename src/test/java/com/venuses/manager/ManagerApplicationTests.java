@@ -3,16 +3,22 @@ package com.venuses.manager;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.venuses.manager.domain.application.guild.GuildApplicationService;
 import com.venuses.manager.domain.application.guild.GuildApplicationServiceImpl;
 import com.venuses.manager.domain.application.guild.GuildRepository;
 import com.venuses.manager.domain.application.guild.dto.DiscordServerDto;
 import com.venuses.manager.domain.application.guild.dto.GuildDto;
+import com.venuses.manager.domain.application.member.MemberRepository;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberNotFoundException;
 import com.venuses.manager.setup.GuildRepositoryInMemoryImpl;
+import com.venuses.manager.setup.MemberRepositoryInMemoryImpl;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,10 +26,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ManagerApplicationTests {
 
-	private GuildRepository guildRepository = new GuildRepositoryInMemoryImpl();
+	private List<GuildDto> guilds = new ArrayList<>();
+	private List<MemberDto> members = new ArrayList<>();
+
+	private GuildRepository guildRepository = new GuildRepositoryInMemoryImpl(guilds, members);
+	private MemberRepository memberRepository = new MemberRepositoryInMemoryImpl(members);
 	private CreateGuildFactory createGuildFactory = new CreateGuildFactory();
 	private GuildApplicationService guildApplicationService = new GuildApplicationServiceImpl(guildRepository,
-			createGuildFactory);
+			createGuildFactory, memberRepository);
 
 	@Test
 	void shouldCreateGuild() {
@@ -37,11 +47,8 @@ class ManagerApplicationTests {
 
 	@Test
 	void shouldAddMemberToGuildCreated() throws GuildNotFoundException {
-		GuildDto guildRequest = new GuildDto(
-			"Java Community", 
-			"234324336",
-			new DiscordServerDto("2", "Argentina", "Maria")
-		);
+		GuildDto guildRequest = new GuildDto("Java Community", "234324336",
+				new DiscordServerDto("2", "Argentina", "Maria"));
 		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
 		assertNotNull(guild.getId());
 
@@ -55,7 +62,7 @@ class ManagerApplicationTests {
 	}
 
 	@Test
-	void shouldCreatePlaylist() throws GuildNotFoundException {
+	void shouldCreatePlaylist() throws GuildNotFoundException, MemberNotFoundException {
 		GuildDto guildRequest = new GuildDto(
 			"Python Community",
 			"98279878926",
@@ -64,7 +71,11 @@ class ManagerApplicationTests {
 		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
 		assertNotNull(guild.getId());
 
-		PlaylistDto playlistRequest = new PlaylistDto("Playlist of Rock", "John Doe");
+		MemberDto memberRequest = new MemberDto("7356719871", "mellomaths", true);
+		MemberDto member = this.guildApplicationService.addMember(guild.getId(), memberRequest);
+		assertNotNull(member.getId());
+
+		PlaylistDto playlistRequest = new PlaylistDto("Playlist of Rock", member.getId());
 		PlaylistDto playlist = this.guildApplicationService.createPlaylist(guild.getId(), playlistRequest);
 		assertNotNull(playlist.getId());
 		assertNotNull(playlist.getCreationDate());

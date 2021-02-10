@@ -12,6 +12,12 @@ import com.venuses.manager.domain.exception.GuildNotFoundException;
 public class GuildRepositoryInMemoryImpl implements GuildRepository {
 
     private List<GuildDto> guilds = new ArrayList<>();
+    private List<MemberDto> members = new ArrayList<>();
+
+    public GuildRepositoryInMemoryImpl(List<GuildDto> guilds, List<MemberDto> members) {
+        this.guilds = guilds;
+        this.members = members;
+    }
 
     @Override
     public void save(GuildDto guildDto) {
@@ -58,6 +64,7 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
                 found = true;
                 List<MemberDto> members = g.getMembers();
                 members.add(memberDto);
+                this.members.add(memberDto);
                 g.setMembers(members);
             }
         }
