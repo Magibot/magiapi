@@ -46,7 +46,7 @@ public class SongDto {
             song.getArtist(),
             song.getAddedBy(),
             song.getYoutubeLink(),
-            song.getCreationDate().toString();
+            song.getCreationDate().toString());
     }
 
     public String getId() {
