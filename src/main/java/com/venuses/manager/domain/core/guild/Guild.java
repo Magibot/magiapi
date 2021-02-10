@@ -33,8 +33,8 @@ public class Guild extends Entity {
         this.members = members;
     }
 
-    public Playlist createPlaylist(String name, String creator) {
-        Playlist newPlaylist = new Playlist(name, this.getId(), creator);
+    public Playlist createPlaylist(String name, String creator, Boolean open) {
+        Playlist newPlaylist = new Playlist(name, this.getId(), creator, open);
         playlists.add(newPlaylist);
         return newPlaylist;
     }

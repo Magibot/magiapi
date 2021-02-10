@@ -68,6 +68,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
             playlistDto.getName(),
             playlistDto.getGuildId(),
             playlistDto.getCreator(),
+            playlistDto.getOpen(),
             songs,
             playlistDto.getCreationDate());
     } 
@@ -109,7 +110,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         memberRepository.findById(playlistDto.getCreator());
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
-        Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator());
+        Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator(), playlistDto.getOpen());
         PlaylistDto playlistCreated = PlaylistDto.from(playlist);
         guildRepository.addPlaylist(guildId, playlistCreated);
         return playlistCreated;

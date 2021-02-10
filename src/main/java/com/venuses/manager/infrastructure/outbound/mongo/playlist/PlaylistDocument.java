@@ -19,14 +19,16 @@ public class PlaylistDocument {
     private final String name;
     private final String guildId;
     private final String creator;
+    private final Boolean open;
     private final List<SongDocument> songs;
     private final String creationDate;
 
-    public PlaylistDocument(String id, String name, String guildId, String creator, List<SongDocument> songs, String creationDate) {
+    public PlaylistDocument(String id, String name, String guildId, String creator, Boolean open, List<SongDocument> songs, String creationDate) {
         this.id = id;
         this.name = name;
         this.guildId = guildId;
         this.creator = creator;
+        this.open = open;
         this.songs = songs;
         this.creationDate = creationDate;
     }
@@ -39,6 +41,7 @@ public class PlaylistDocument {
             playlistDto.getName(),
             playlistDto.getGuildId(),
             playlistDto.getCreator(),
+            playlistDto.getOpen(),
             songDocuments,
             playlistDto.getCreationDate()
         );
@@ -52,6 +55,7 @@ public class PlaylistDocument {
             name,
             guildId,
             creator,
+            open,
             songDtos,
             creationDate
         );

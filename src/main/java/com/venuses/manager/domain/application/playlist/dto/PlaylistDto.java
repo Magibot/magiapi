@@ -12,6 +12,7 @@ public class PlaylistDto {
     protected String name;
     protected String guildId;
     protected String creator;
+    protected Boolean open;
     protected List<SongDto> songs;
     protected String creationDate;
 
@@ -19,25 +20,28 @@ public class PlaylistDto {
         
     }
 
-    public PlaylistDto(String name, String creator, List<SongDto> songs) {
+    public PlaylistDto(String name, String creator, Boolean open, List<SongDto> songs) {
         this.name = name;
         this.creator = creator;
+        this.open = open;
         this.songs = songs;
     }
 
-    public PlaylistDto(String name, String guildId, String creator, List<SongDto> songs, String creationDate) {
+    public PlaylistDto(String name, String guildId, String creator, Boolean open, List<SongDto> songs, String creationDate) {
         this.name = name;
         this.guildId = guildId;
         this.creator = creator;
+        this.open = open;
         this.songs = songs;
         this.creationDate = creationDate;
     }
 
-    public PlaylistDto(String id, String name, String guildId, String creator, List<SongDto> songs, String creationDate) {
+    public PlaylistDto(String id, String name, String guildId, String creator, Boolean open, List<SongDto> songs, String creationDate) {
         this.id = id;
         this.name = name;
         this.guildId = guildId;
         this.creator = creator;
+        this.open = open;
         this.songs = songs;
         this.creationDate = creationDate;
     }
@@ -50,6 +54,7 @@ public class PlaylistDto {
             playlist.getName(),
             playlist.getGuildId().toString(),
             playlist.getCreator(),
+            playlist.isOpen(),
             songDtos,
             playlist.getCreationDate().toString());    
     }
@@ -84,6 +89,14 @@ public class PlaylistDto {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
     }
 
     public List<SongDto> getSongs() {
