@@ -6,5 +6,7 @@ import com.venuses.manager.domain.exception.MemberNotFoundException;
 public interface MemberRepository {
 
     MemberDto findById(String memberId) throws MemberNotFoundException;
+
+    MemberDto findByIdFromDiscord(String idFromDiscord) throws MemberNotFoundException;
     
 }

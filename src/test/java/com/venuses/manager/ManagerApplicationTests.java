@@ -16,6 +16,7 @@ import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberDuplicatedException;
 import com.venuses.manager.domain.exception.MemberNotFoundException;
 import com.venuses.manager.setup.GuildRepositoryInMemoryImpl;
 import com.venuses.manager.setup.MemberRepositoryInMemoryImpl;
@@ -46,7 +47,7 @@ class ManagerApplicationTests {
 	}
 
 	@Test
-	void shouldAddMemberToGuildCreated() throws GuildNotFoundException {
+	void shouldAddMemberToGuildCreated() throws GuildNotFoundException, MemberDuplicatedException {
 		GuildDto guildRequest = new GuildDto("Java Community", "234324336",
 				new DiscordServerDto("2", "Argentina", "Maria"));
 		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
@@ -62,7 +63,7 @@ class ManagerApplicationTests {
 	}
 
 	@Test
-	void shouldCreatePlaylist() throws GuildNotFoundException, MemberNotFoundException {
+	void shouldCreatePlaylist() throws GuildNotFoundException, MemberNotFoundException, MemberDuplicatedException {
 		GuildDto guildRequest = new GuildDto(
 			"Python Community",
 			"98279878926",

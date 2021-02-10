@@ -5,7 +5,9 @@ import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberDuplicatedException;
 import com.venuses.manager.domain.exception.MemberNotFoundException;
+import com.venuses.manager.infrastructure.inbound.http.exception.BusinessRuleException;
 import com.venuses.manager.infrastructure.inbound.http.exception.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,8 @@ public class GuildsController {
             return ResponseEntity.status(201).body(member);
         } catch (GuildNotFoundException ex) {
             throw new ResourceNotFoundException(ex.getMessage());
+        } catch (MemberDuplicatedException ex) {
+            throw new BusinessRuleException(ex.getMessage());
         }
     }
     
