@@ -5,6 +5,7 @@ import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberNotFoundException;
 import com.venuses.manager.infrastructure.inbound.http.exception.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class GuildsController {
         try {
             PlaylistDto playlist = guildApplicationService.createPlaylist(id, playlistDto);
             return ResponseEntity.status(201).body(playlist);
-        } catch (GuildNotFoundException ex) {
+        } catch (GuildNotFoundException | MemberNotFoundException ex) {
             throw new ResourceNotFoundException(ex.getMessage());
         }
     }

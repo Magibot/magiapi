@@ -4,12 +4,13 @@ import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberNotFoundException;
 
 public interface GuildApplicationService {
     
     GuildDto createGuild(GuildDto guildDto);
 
-    PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException;
+    PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException, MemberNotFoundException;
 
     GuildDto getGuild(String id) throws GuildNotFoundException;
 

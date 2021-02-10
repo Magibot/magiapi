@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.venuses.manager.domain.application.guild.dto.DiscordServerDto;
 import com.venuses.manager.domain.application.guild.dto.GuildDto;
+import com.venuses.manager.domain.application.member.MemberRepository;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
@@ -13,6 +14,7 @@ import com.venuses.manager.domain.core.guild.Guild;
 import com.venuses.manager.domain.core.member.Member;
 import com.venuses.manager.domain.core.playlist.Playlist;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
+import com.venuses.manager.domain.exception.MemberNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,17 @@ import org.springframework.stereotype.Service;
 public class GuildApplicationServiceImpl implements GuildApplicationService {
 
     private final CreateGuildFactory createGuildFactory;
-
     private final GuildRepository guildRepository;
+    private final MemberRepository memberRepository;
 
     @Autowired
-    public GuildApplicationServiceImpl(final GuildRepository guildRepository, final CreateGuildFactory createGuildFactory) {
-        this.guildRepository = guildRepository;
-        this.createGuildFactory = createGuildFactory;
+    public GuildApplicationServiceImpl(
+        final GuildRepository guildRepository,
+        final CreateGuildFactory createGuildFactory,
+        final MemberRepository memberRepository) {
+            this.guildRepository = guildRepository;
+            this.createGuildFactory = createGuildFactory;
+            this.memberRepository = memberRepository;
     }
 
     private Member toMember(MemberDto memberDto) {
@@ -82,7 +88,8 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     }
 
     @Override
-    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException {
+    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException, MemberNotFoundException {
+        memberRepository.findById(playlistDto.getCreator());
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
         Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator());
