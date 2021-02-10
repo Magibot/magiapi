@@ -75,7 +75,7 @@ class ManagerApplicationTests {
 		MemberDto member = this.guildApplicationService.addMember(guild.getId(), memberRequest);
 		assertNotNull(member.getId());
 
-		PlaylistDto playlistRequest = new PlaylistDto("Playlist of Rock", member.getId());
+		PlaylistDto playlistRequest = new PlaylistDto("Playlist of Rock", member.getId(), new ArrayList<>());
 		PlaylistDto playlist = this.guildApplicationService.createPlaylist(guild.getId(), playlistRequest);
 		assertNotNull(playlist.getId());
 		assertNotNull(playlist.getCreationDate());
