@@ -8,11 +8,13 @@ import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.MemberRepository;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
+import com.venuses.manager.domain.application.song.dto.SongDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
 import com.venuses.manager.domain.core.guild.DiscordServer;
 import com.venuses.manager.domain.core.guild.Guild;
 import com.venuses.manager.domain.core.member.Member;
 import com.venuses.manager.domain.core.playlist.Playlist;
+import com.venuses.manager.domain.core.song.Song;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
 import com.venuses.manager.domain.exception.MemberNotFoundException;
 
@@ -46,12 +48,26 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         );
     }
 
+    private Song toSong(SongDto songDto) {
+        return new Song(
+            songDto.getId(),
+            songDto.getName(),
+            songDto.getArtist(),
+            songDto.getAddedBy(),
+            songDto.getYoutubeLink(),
+            songDto.getCreationDate()
+        );
+    }
+
     private Playlist toPlaylist(PlaylistDto playlistDto) {
+        List<Song> songs = new ArrayList<>();
+        playlistDto.getSongs().forEach(songDto -> songs.add(toSong(songDto)));
         return new Playlist(
             playlistDto.getId(),
             playlistDto.getName(),
             playlistDto.getGuildId(),
             playlistDto.getCreator(),
+            songs,
             playlistDto.getCreationDate());
     } 
 
@@ -65,7 +81,7 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         guildDto.getPlaylists().forEach(playlistDto -> playlists.add(toPlaylist(playlistDto)));
         List<Member> members = new ArrayList<>();
         guildDto.getMembers().forEach(memberDto -> members.add(toMember(memberDto)));
-        DiscordServer discordServer = this.toDiscordServer(guildDto.getDiscordServer());
+        DiscordServer discordServer = toDiscordServer(guildDto.getDiscordServer());
         return new Guild(
             guildDto.getId(),
             guildDto.getName(),
