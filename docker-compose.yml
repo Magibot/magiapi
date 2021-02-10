@@ -21,7 +21,7 @@ services:
       - "8080:8080"
     environment:
       PORT: 8080
-      MONGODB_DB_NAME: magi-manager
+      MONGODB_DB_NAME: venuses
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_USER: system
