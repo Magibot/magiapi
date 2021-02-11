@@ -15,7 +15,7 @@ import com.venuses.manager.domain.exception.MemberNotFoundException;
 
 import org.junit.jupiter.api.Test;
 
-class ManagerApplicationTests {
+class GuildTests {
 
 	private final CreateGuildFactory createGuildFactory = new CreateGuildFactory();
 
