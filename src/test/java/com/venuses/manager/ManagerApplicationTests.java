@@ -47,7 +47,7 @@ class ManagerApplicationTests {
 	}
 
 	@Test
-	void shouldAddMemberToGuildCreated() throws GuildNotFoundException, MemberDuplicatedException {
+	void shouldAddMemberToGuild() throws GuildNotFoundException, MemberDuplicatedException {
 		GuildDto guildRequest = new GuildDto("Java Community", "234324336",
 				new DiscordServerDto("2", "Argentina", "Maria"));
 		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
