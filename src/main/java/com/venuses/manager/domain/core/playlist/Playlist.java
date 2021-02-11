@@ -60,5 +60,10 @@ public class Playlist extends Entity {
     public int size() {
         return songs.size();
     }
+
+    public void addSong(String name, String artist, String addedBy, String youtubeLink) {
+        Song s = new Song(name, artist, addedBy, youtubeLink);
+        songs.add(s);
+    }
     
 }
