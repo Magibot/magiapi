@@ -55,7 +55,7 @@ public class MemberTest {
 	@Test
 	void shouldTryToAddDuplicatedMemberToGuild() throws GuildNotFoundException, MemberDuplicatedException {
 		GuildDto guildRequest = new GuildDto("Python Community", "1234567",
-		new DiscordServerDto("2", "Ireland", "Matthew"));
+			new DiscordServerDto("2", "Ireland", "Matthew"));
 		guild = this.guildApplicationService.createGuild(guildRequest);
 		assertNotNull(guild.getId());
 
@@ -79,6 +79,33 @@ public class MemberTest {
 		} catch (MemberDuplicatedException ex) {
 			fail("Duplicated member could not be generated! Check the testing database.");
 		}
+	}
+
+	@Test
+	void shouldAddMemberToDifferentGuilds() throws GuildNotFoundException, MemberDuplicatedException {
+		GuildDto guild1 = new GuildDto("Go Community", "1234567",
+			new DiscordServerDto("2", "Ireland", "Matthew"));
+		guild1 = this.guildApplicationService.createGuild(guild1);
+		assertNotNull(guild1);
+		assertNotNull(guild1.getId());
+		GuildDto guild2 = new GuildDto("Ruby Community", "1234567",
+			new DiscordServerDto("3", "Netherland", "Maestro"));
+		guild2 = this.guildApplicationService.createGuild(guild2);
+		assertNotNull(guild2);
+		assertNotNull(guild2.getId());
+
+		MemberDto member = new MemberDto("7356719871", "mellomaths", true);
+		member = this.guildApplicationService.addMember(guild1.getId(), member);
+		guild1 = this.guildApplicationService.getGuild(guild1.getId());
+		assertTrue(guild1.getMembers().contains(member));
+
+		member = this.guildApplicationService.addMember(guild2.getId(), member);
+		guild2 = this.guildApplicationService.getGuild(guild2.getId());
+		assertTrue(guild2.getMembers().contains(member));
+		
+		// In case, member was overwritten in the operation 'addMember' for guild2
+		// assertTrue(guild1.getMembers().contains(member));
+		// assertTrue(guild2.getMembers().contains(member));
 	}
     
 }
