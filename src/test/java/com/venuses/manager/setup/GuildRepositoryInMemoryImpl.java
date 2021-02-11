@@ -13,10 +13,12 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
 
     private List<GuildDto> guilds = new ArrayList<>();
     private List<MemberDto> members = new ArrayList<>();
+    private List<PlaylistDto> playlists = new ArrayList<>();
 
-    public GuildRepositoryInMemoryImpl(List<GuildDto> guilds, List<MemberDto> members) {
+    public GuildRepositoryInMemoryImpl(List<GuildDto> guilds, List<MemberDto> members, List<PlaylistDto> playlists) {
         this.guilds = guilds;
         this.members = members;
+        this.playlists = playlists;
     }
 
     @Override
@@ -32,6 +34,7 @@ public class GuildRepositoryInMemoryImpl implements GuildRepository {
                 found = true;
                 List<PlaylistDto> playlists = g.getPlaylists();
                 playlists.add(playlistDto);
+                this.playlists.add(playlistDto);
                 g.setPlaylists(playlists);
             }
         }

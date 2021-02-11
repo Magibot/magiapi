@@ -7,6 +7,7 @@ import com.venuses.manager.domain.application.guild.dto.DiscordServerDto;
 import com.venuses.manager.domain.application.guild.dto.GuildDto;
 import com.venuses.manager.domain.application.member.MemberRepository;
 import com.venuses.manager.domain.application.member.dto.MemberDto;
+import com.venuses.manager.domain.application.playlist.PlaylistRepository;
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.application.song.dto.SongDto;
 import com.venuses.manager.domain.core.guild.CreateGuildFactory;
@@ -28,15 +29,18 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     private final CreateGuildFactory createGuildFactory;
     private final GuildRepository guildRepository;
     private final MemberRepository memberRepository;
+    private final PlaylistRepository playlistRepository;
 
     @Autowired
     public GuildApplicationServiceImpl(
         final GuildRepository guildRepository,
         final CreateGuildFactory createGuildFactory,
-        final MemberRepository memberRepository) {
+        final MemberRepository memberRepository,
+        final PlaylistRepository playlistRepository) {
             this.guildRepository = guildRepository;
             this.createGuildFactory = createGuildFactory;
             this.memberRepository = memberRepository;
+            this.playlistRepository = playlistRepository;
     }
 
     private Member toMember(MemberDto memberDto) {
@@ -129,6 +133,16 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         MemberDto memberCreated = MemberDto.from(member);
         guildRepository.addMember(guildId, memberCreated);
         return memberCreated;
+    }
+
+    @Override
+    public PlaylistDto addSongToPlaylist(String playlistId, SongDto songDto) {
+        PlaylistDto playlistDto = this.playlistRepository.findById(playlistId);
+        Playlist playlist = toPlaylist(playlistDto);
+        playlist.addSong(songDto.getName(), songDto.getArtist(), songDto.getAddedBy(), songDto.getYoutubeLink());
+        playlistDto = PlaylistDto.from(playlist);
+        this.playlistRepository.update(playlistDto);
+        return playlistDto;
     }
     
 }
