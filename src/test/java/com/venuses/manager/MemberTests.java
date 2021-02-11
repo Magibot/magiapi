@@ -14,7 +14,7 @@ import com.venuses.manager.domain.exception.MemberDuplicatedException;
 
 import org.junit.jupiter.api.Test;
 
-public class MemberTests {
+class MemberTests {
 
 	private final CreateGuildFactory createGuildFactory = new CreateGuildFactory();
 
