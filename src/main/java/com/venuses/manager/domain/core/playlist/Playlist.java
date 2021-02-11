@@ -52,5 +52,13 @@ public class Playlist extends Entity {
     public Boolean isOpen() {
         return open;
     }
+
+    public Boolean isEmpty() {
+        return songs.isEmpty();
+    }
+
+    public int size() {
+        return songs.size();
+    }
     
 }
