@@ -1,9 +1,7 @@
 package com.venuses.manager;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,55 +42,10 @@ class ManagerApplicationTests {
 	void shouldCreateGuild() {
 		DiscordServerDto discordServerDto = new DiscordServerDto("1", "Brazil", "John");
 		GuildDto guildDto = new GuildDto("New Discord Server Test", "8712627182982", discordServerDto);
-		GuildDto guildCreated = this.guildApplicationService.createGuild(guildDto);
-		assertNotNull(guildCreated);
-		assertNotNull(guildCreated.getId());
-		assertNotNull(guildCreated.getCreationDate());
-	}
-
-	@Test
-	void shouldAddMemberToGuild() throws GuildNotFoundException, MemberDuplicatedException {
-		GuildDto guildRequest = new GuildDto("Java Community", "234324336",
-				new DiscordServerDto("2", "Argentina", "Maria"));
-		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
+		guild = this.guildApplicationService.createGuild(guildDto);
+		assertNotNull(guild);
 		assertNotNull(guild.getId());
-
-		MemberDto memberRequest = new MemberDto("7356719871", "mellomaths", true);
-		MemberDto member = this.guildApplicationService.addMember(guild.getId(), memberRequest);
-		assertNotNull(member.getId());
-		assertNotNull(member.getCreationDate());
-
-		guild = this.guildApplicationService.getGuild(guild.getId());
-		assertTrue(guild.getMembers().contains(member));
-	}
-
-	@Test
-	void shouldTryToAddDuplicatedMemberToGuild() throws GuildNotFoundException, MemberDuplicatedException {
-		GuildDto guildRequest = new GuildDto("Python Community", "1234567",
-		new DiscordServerDto("2", "Ireland", "Matthew"));
-		guild = this.guildApplicationService.createGuild(guildRequest);
-		assertNotNull(guild.getId());
-
-		MemberDto memberRequest = new MemberDto("7356719871", "mellomaths", true);
-		try {
-			MemberDto member = this.guildApplicationService.addMember(guild.getId(), memberRequest);
-			assertNotNull(member.getId());
-			assertNotNull(member.getCreationDate());
-
-			guild = this.guildApplicationService.getGuild(guild.getId());
-			assertTrue(guild.getMembers().contains(member));
-
-			memberRequest = new MemberDto("7356719871", "newman", true);
-			MemberDuplicatedException exception = assertThrows(MemberDuplicatedException.class, () -> {
-				MemberDto memberDto = new MemberDto("7356719871", "newman", true);
-				this.guildApplicationService.addMember(guild.getId(), memberDto);
-			});
-
-			assertTrue(exception.getMessage().contains("idFromDiscord=7356719871"));
-			assertTrue(exception.getMessage().contains("was already added to Guild"));
-		} catch (MemberDuplicatedException ex) {
-			fail("Duplicated member could not be generated! Check the testing database.");
-		}
+		assertNotNull(guild.getCreationDate());
 	}
 
 	@Test
@@ -102,7 +55,7 @@ class ManagerApplicationTests {
 			"98279878926",
 			new DiscordServerDto("3", "Italy", "Guido")
 		);
-		GuildDto guild = this.guildApplicationService.createGuild(guildRequest);
+		guild = this.guildApplicationService.createGuild(guildRequest);
 		assertNotNull(guild.getId());
 
 		MemberDto memberRequest = new MemberDto("7356719871", "mellomaths", true);
