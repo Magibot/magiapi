@@ -8,7 +8,9 @@ import com.venuses.manager.domain.exception.PlaylistNotFoundException;
 import com.venuses.manager.domain.exception.PlaylistNotOpenException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PlaylistApplicationServiceImpl implements PlaylistApplicationService {
 
     private final PlaylistRepository playlistRepository;
