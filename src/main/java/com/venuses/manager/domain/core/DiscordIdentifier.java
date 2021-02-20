@@ -18,7 +18,7 @@ public class DiscordIdentifier implements Serializable {
 
     @Override
     public String toString() {
-        return "DiscordIdentifier [value=" + value + "]";
+        return value;
     }
 
     @Override
