@@ -62,7 +62,7 @@ public class Playlist extends Entity {
         return songs.size();
     }
 
-    public void addSong(String name, String artist, String addedBy, String youtubeLink) throws PlaylistNotOpenException {
+    public Song addSong(String name, String artist, String addedBy, String youtubeLink) throws PlaylistNotOpenException {
         Song song = new Song(name, artist, addedBy, youtubeLink);
 
         if (!this.open.booleanValue() && !song.getAddedBy().equals(this.creator)) {
@@ -70,6 +70,7 @@ public class Playlist extends Entity {
         }
 
         songs.add(song);
+        return song;
     }
     
 }
