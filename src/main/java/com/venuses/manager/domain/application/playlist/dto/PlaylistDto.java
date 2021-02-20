@@ -53,7 +53,7 @@ public class PlaylistDto {
             playlist.getId().toString(),
             playlist.getName(),
             playlist.getGuildId().toString(),
-            playlist.getCreator(),
+            playlist.getCreator().toString(),
             playlist.isOpen(),
             songDtos,
             playlist.getCreationDate().toString());    
