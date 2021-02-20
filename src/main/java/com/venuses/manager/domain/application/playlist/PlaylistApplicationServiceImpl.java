@@ -1,5 +1,8 @@
 package com.venuses.manager.domain.application.playlist;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.application.song.dto.SongDto;
 import com.venuses.manager.domain.core.playlist.Playlist;
@@ -20,16 +23,38 @@ public class PlaylistApplicationServiceImpl implements PlaylistApplicationServic
         this.playlistRepository = playlistRepository;
     }
 
+    private Song toSong(SongDto songDto) {
+        return new Song(
+            songDto.getId(),
+            songDto.getName(),
+            songDto.getArtist(),
+            songDto.getAddedBy(),
+            songDto.getYoutubeLink(),
+            songDto.getCreationDate());
+    }
+
     private Playlist toPlaylist(PlaylistDto playlistDto) {
-        return new Playlist(playlistDto.getName(), playlistDto.getGuildId(), playlistDto.getCreator(),
-                playlistDto.getOpen());
+        List<Song> songs = new ArrayList<>();
+        playlistDto.getSongs().forEach(songDto -> songs.add(toSong(songDto)));
+        return new Playlist(
+            playlistDto.getId(),
+            playlistDto.getName(), 
+            playlistDto.getGuildId(), 
+            playlistDto.getCreator(),
+            playlistDto.getOpen(),
+            songs,
+            playlistDto.getCreationDate());
     }
 
     @Override
     public PlaylistDto createPlaylist(PlaylistDto playlistDto) {
-        Playlist playlist = toPlaylist(playlistDto);
+        Playlist playlist = new Playlist(
+            playlistDto.getName(),
+            playlistDto.getGuildId(), 
+            playlistDto.getCreator(), 
+            playlistDto.getOpen());
         PlaylistDto playlistCreated = PlaylistDto.from(playlist);
-        playlistRepository.save(playlistCreated);
+        playlistRepository.create(playlistCreated);
         return playlistCreated;
     }
 
@@ -44,7 +69,7 @@ public class PlaylistApplicationServiceImpl implements PlaylistApplicationServic
             songDto.getAddedBy(), 
             songDto.getYoutubeLink());
         playlistDto = PlaylistDto.from(playlist);
-        playlistRepository.save(playlistDto);
+        playlistRepository.update(playlistDto);
         return SongDto.from(song);
     }
     
