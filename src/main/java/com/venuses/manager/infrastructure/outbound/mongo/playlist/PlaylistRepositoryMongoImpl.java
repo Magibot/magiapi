@@ -7,18 +7,21 @@ import com.venuses.manager.domain.application.playlist.dto.PlaylistDto;
 import com.venuses.manager.domain.exception.PlaylistNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-@Primary
+@Repository
 public class PlaylistRepositoryMongoImpl implements PlaylistRepository {
 
     @Autowired 
     private PlaylistCollection playlistCollection;
 
     @Override
-    public void save(PlaylistDto playlistDto) {
+    public void create(PlaylistDto playlistDto) {
+        playlistCollection.insert(PlaylistDocument.of(playlistDto));
+    }
+
+    @Override
+    public void update(PlaylistDto playlistDto) {
         playlistCollection.save(PlaylistDocument.of(playlistDto));
     }
 

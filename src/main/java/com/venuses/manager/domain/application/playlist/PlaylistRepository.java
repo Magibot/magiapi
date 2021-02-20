@@ -5,7 +5,9 @@ import com.venuses.manager.domain.exception.PlaylistNotFoundException;
 
 public interface PlaylistRepository {
 
-    void save(PlaylistDto playlistDto);
+    void update(PlaylistDto playlistDto);
+
+    void create(PlaylistDto playlistDto);
 
     PlaylistDto findById(String playlistId) throws PlaylistNotFoundException;
     
