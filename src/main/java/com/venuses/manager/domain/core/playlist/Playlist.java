@@ -63,12 +63,13 @@ public class Playlist extends Entity {
     }
 
     public void addSong(String name, String artist, String addedBy, String youtubeLink) throws PlaylistNotOpenException {
-        if (!this.open.booleanValue() && !addedBy.equals(this.creator)) {
+        Song song = new Song(name, artist, addedBy, youtubeLink);
+
+        if (!this.open.booleanValue() && !song.getAddedBy().equals(this.creator)) {
             throw new PlaylistNotOpenException("User " + addedBy + " does not have permission to add songs to this playlist. Only " + this.creator + " can do that.");
         }
 
-        Song s = new Song(name, artist, addedBy, youtubeLink);
-        songs.add(s);
+        songs.add(song);
     }
     
 }
