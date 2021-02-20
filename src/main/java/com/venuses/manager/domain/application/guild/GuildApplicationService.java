@@ -7,6 +7,7 @@ import com.venuses.manager.domain.application.song.dto.SongDto;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
 import com.venuses.manager.domain.exception.MemberDuplicatedException;
 import com.venuses.manager.domain.exception.MemberNotFoundException;
+import com.venuses.manager.domain.exception.PlaylistNotOpenException;
 
 public interface GuildApplicationService {
     
@@ -18,6 +19,6 @@ public interface GuildApplicationService {
 
     MemberDto addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException, MemberDuplicatedException;
 
-    PlaylistDto addSongToPlaylist(String playlistId, SongDto songDto);
+    PlaylistDto addSongToPlaylist(String playlistId, SongDto songDto) throws PlaylistNotOpenException;
 
 }

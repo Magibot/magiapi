@@ -6,6 +6,7 @@ import java.util.List;
 import com.venuses.manager.domain.core.Entity;
 import com.venuses.manager.domain.core.Identifier;
 import com.venuses.manager.domain.core.song.Song;
+import com.venuses.manager.domain.exception.PlaylistNotOpenException;
 
 public class Playlist extends Entity {
 
@@ -61,7 +62,11 @@ public class Playlist extends Entity {
         return songs.size();
     }
 
-    public void addSong(String name, String artist, String addedBy, String youtubeLink) {
+    public void addSong(String name, String artist, String addedBy, String youtubeLink) throws PlaylistNotOpenException {
+        if (!this.open.booleanValue() && !addedBy.equals(this.creator)) {
+            throw new PlaylistNotOpenException("User " + addedBy + " does not have permission to add songs to this playlist. Only " + this.creator + " can do that.");
+        }
+
         Song s = new Song(name, artist, addedBy, youtubeLink);
         songs.add(s);
     }

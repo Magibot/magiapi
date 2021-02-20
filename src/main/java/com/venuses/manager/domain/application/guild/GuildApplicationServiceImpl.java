@@ -18,6 +18,7 @@ import com.venuses.manager.domain.core.playlist.Playlist;
 import com.venuses.manager.domain.core.song.Song;
 import com.venuses.manager.domain.exception.GuildNotFoundException;
 import com.venuses.manager.domain.exception.MemberNotFoundException;
+import com.venuses.manager.domain.exception.PlaylistNotOpenException;
 import com.venuses.manager.domain.exception.MemberDuplicatedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,50 +33,31 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     private final PlaylistRepository playlistRepository;
 
     @Autowired
-    public GuildApplicationServiceImpl(
-        final GuildRepository guildRepository,
-        final CreateGuildFactory createGuildFactory,
-        final MemberRepository memberRepository,
-        final PlaylistRepository playlistRepository) {
-            this.guildRepository = guildRepository;
-            this.createGuildFactory = createGuildFactory;
-            this.memberRepository = memberRepository;
-            this.playlistRepository = playlistRepository;
+    public GuildApplicationServiceImpl(final GuildRepository guildRepository,
+            final CreateGuildFactory createGuildFactory, final MemberRepository memberRepository,
+            final PlaylistRepository playlistRepository) {
+        this.guildRepository = guildRepository;
+        this.createGuildFactory = createGuildFactory;
+        this.memberRepository = memberRepository;
+        this.playlistRepository = playlistRepository;
     }
 
     private Member toMember(MemberDto memberDto) {
-        return new Member(
-            memberDto.getId(),
-            memberDto.getIdFromDiscord(),
-            memberDto.getUsername(),
-            memberDto.getIsAdministrator(),
-            memberDto.getCreationDate()
-        );
+        return new Member(memberDto.getId(), memberDto.getIdFromDiscord(), memberDto.getUsername(),
+                memberDto.getIsAdministrator(), memberDto.getCreationDate());
     }
 
     private Song toSong(SongDto songDto) {
-        return new Song(
-            songDto.getId(),
-            songDto.getName(),
-            songDto.getArtist(),
-            songDto.getAddedBy(),
-            songDto.getYoutubeLink(),
-            songDto.getCreationDate()
-        );
+        return new Song(songDto.getId(), songDto.getName(), songDto.getArtist(), songDto.getAddedBy(),
+                songDto.getYoutubeLink(), songDto.getCreationDate());
     }
 
     private Playlist toPlaylist(PlaylistDto playlistDto) {
         List<Song> songs = new ArrayList<>();
         playlistDto.getSongs().forEach(songDto -> songs.add(toSong(songDto)));
-        return new Playlist(
-            playlistDto.getId(),
-            playlistDto.getName(),
-            playlistDto.getGuildId(),
-            playlistDto.getCreator(),
-            playlistDto.getOpen(),
-            songs,
-            playlistDto.getCreationDate());
-    } 
+        return new Playlist(playlistDto.getId(), playlistDto.getName(), playlistDto.getGuildId(),
+                playlistDto.getCreator(), playlistDto.getOpen(), songs, playlistDto.getCreationDate());
+    }
 
     private DiscordServer toDiscordServer(DiscordServerDto discordServerDto) {
         return new DiscordServer(discordServerDto.getIdFromDiscord(), discordServerDto.getRegion(),
@@ -88,33 +70,27 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
         List<Member> members = new ArrayList<>();
         guildDto.getMembers().forEach(memberDto -> members.add(toMember(memberDto)));
         DiscordServer discordServer = toDiscordServer(guildDto.getDiscordServer());
-        return new Guild(
-            guildDto.getId(),
-            guildDto.getName(),
-            guildDto.getIconHash(),
-            discordServer, 
-            playlists, 
-            members,
-            guildDto.getCreationDate());
+        return new Guild(guildDto.getId(), guildDto.getName(), guildDto.getIconHash(), discordServer, playlists,
+                members, guildDto.getCreationDate());
     }
 
     @Override
     public GuildDto createGuild(GuildDto guildDto) {
-        Guild guild = createGuildFactory.execute(
-            guildDto.getName(), 
-            guildDto.getIconHash(), 
-            toDiscordServer(guildDto.getDiscordServer()));
+        Guild guild = createGuildFactory.execute(guildDto.getName(), guildDto.getIconHash(),
+                toDiscordServer(guildDto.getDiscordServer()));
         GuildDto guildCreated = GuildDto.from(guild);
         this.guildRepository.save(guildCreated);
         return guildCreated;
     }
 
     @Override
-    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto) throws GuildNotFoundException, MemberNotFoundException {
+    public PlaylistDto createPlaylist(String guildId, PlaylistDto playlistDto)
+            throws GuildNotFoundException, MemberNotFoundException {
         memberRepository.findById(playlistDto.getCreator());
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
-        Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator(), playlistDto.getOpen());
+        Playlist playlist = guild.createPlaylist(playlistDto.getName(), playlistDto.getCreator(),
+                playlistDto.getOpen());
         PlaylistDto playlistCreated = PlaylistDto.from(playlist);
         guildRepository.addPlaylist(guildId, playlistCreated);
         return playlistCreated;
@@ -126,17 +102,19 @@ public class GuildApplicationServiceImpl implements GuildApplicationService {
     }
 
     @Override
-    public MemberDto addMember(String guildId, MemberDto memberDto) throws GuildNotFoundException, MemberDuplicatedException{
+    public MemberDto addMember(String guildId, MemberDto memberDto)
+            throws GuildNotFoundException, MemberDuplicatedException {
         GuildDto guildDto = guildRepository.findById(guildId);
         Guild guild = toGuild(guildDto);
-        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getUsername(), memberDto.getIsAdministrator());
+        Member member = guild.addMember(memberDto.getIdFromDiscord(), memberDto.getUsername(),
+                memberDto.getIsAdministrator());
         MemberDto memberCreated = MemberDto.from(member);
         guildRepository.addMember(guildId, memberCreated);
         return memberCreated;
     }
 
     @Override
-    public PlaylistDto addSongToPlaylist(String playlistId, SongDto songDto) {
+    public PlaylistDto addSongToPlaylist(String playlistId, SongDto songDto) throws PlaylistNotOpenException {
         PlaylistDto playlistDto = this.playlistRepository.findById(playlistId);
         Playlist playlist = toPlaylist(playlistDto);
         playlist.addSong(songDto.getName(), songDto.getArtist(), songDto.getAddedBy(), songDto.getYoutubeLink());
